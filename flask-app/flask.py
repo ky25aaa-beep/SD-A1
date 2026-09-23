@@ -9,7 +9,7 @@ global Debug
 from hashlib import sha256
 import uuid
 from flask import session
-
+#set secret
 ##required constants
 wordlist = ["apple", "grape", "peach", "berry", "mango", "lemon", "space", "melon", "plums", "apric"]
 Debug = True
@@ -69,7 +69,9 @@ def api_handler(data):
 #        "GUESS": "your_guess_value"
 #    }   
 #}
-    if data["api_v2_data"]["cmd"] != "get_Guess_Result":
+    if data["api_v2_data"]["cmd"] == "initialise":
+        return {"status": "initialised"}
+    elif data["api_v2_data"]["cmd"] == "get_Guess_Result":
         guess = data["api_v2_data"]["GUESS"]
         previous_guess = data["api_v2_data"]["PreviousGuess"]
         known_positions = data["api_v2_data"]["KnownPositions"]
@@ -122,17 +124,20 @@ def api_handler(data):
             "user_guess_status": "New word generated",
             "result_unknown_positions": []
         }
+    
 
 
 def FlaskUI():
     app = flask.Flask(__name__)
+    app.secret_key = os.urandom(24)
 
     @app.route("/api", methods=['POST']) 
     def api():
-        #recieve json 
-        data = flask.request.get_json
-        api_handler(data)
-
+        data = flask.request.get_json()
+        
+        result = api_handler(data)
+        return flask.jsonify(result)
+    
     @app.route("/")
     def index():
         return flask.render_template("index.html")

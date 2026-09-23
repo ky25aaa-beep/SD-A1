@@ -1,11 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Wordle</title>
 </head>
 <body>
-    Wordle Game Page
+    <h1>Play Wordle</h1>
+
+    <input type="text" id="guessInput" maxlength="5" placeholder="5-letter word">
+    <button onclick="submitGuess()">Guess</button>
+    <button onclick="newWord()">New Word</button>
+
+    <p>Status: <span id="status"></span></p>
+    <p>Known positions: <span id="known"></span></p>
+    <p>Known letters (wrong position): <span id="unknown"></span></p>
+
+    <h2>Guess history</h2>
+    <ul id="history"></ul>
+
+    <script>
+        let previousGuess = "";
+        let knownPositions = {};
+        let knownLettersWithoutPosition = [];
+
+        async function callApi(cmd, guess) {
+            const response = await fetch("/api", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    api_v2_data: {
+                        cmd: cmd,
+                        Account_ID: "anon",
+                        PreviousGuess: previousGuess,
+                        KnownPositions: knownPositions,
+                        KnownLettersWithoutPosition: knownLettersWithoutPosition,
+                        WORDLE_HASH: "",
+                        GUESS: guess || ""
+                    }
+                })
+            });
+            return response.json();
+        }
+
+        async function submitGuess() {
+            const guess = document.getElementById("guessInput").value.toLowerCase();
+            if (guess.length !== 5) {
+                document.getElementById("status").textContent = "Guess must be 5 letters";
+                return;
+            }
+
+            const data = await callApi("submit_guess", guess);
+
+            previousGuess = guess;
+            if (data.result_known_positions) {
+                knownPositions = data.result_known_positions;
+            }
+            if (data.result_unknown_positions) {
+                knownLettersWithoutPosition = data.result_unknown_positions;
+            }
+
+            document.getElementById("status").textContent = data.user_guess_status || "";
+            document.getElementById("known").textContent =
+                data.result_known_positions ? Object.values(data.result_known_positions).join("") : "";
+            document.getElementById("unknown").textContent =
+                (data.result_unknown_positions || []).join(", ");
+
+            const li = document.createElement("li");
+            li.textContent = guess + " -> " + (data.user_guess_status || "");
+            document.getElementById("history").appendChild(li);
+
+            if (data.user_guess_status === "Correct" || data.user_guess_status === "Maximum guesses reached") {
+                if (data.answer) {
+                    document.getElementById("status").textContent += " (answer: " + data.answer + ")";
+                }
+            }
+
+            document.getElementById("guessInput").value = "";
+        }
+
+        async function newWord() {
+            const data = await callApi("Generate_New_Word");
+            previousGuess = "";
+            knownPositions = {};
+            knownLettersWithoutPosition = [];
+            document.getElementById("status").textContent = data.user_guess_status || "";
+            document.getElementById("known").textContent = "";
+            document.getElementById("unknown").textContent = "";
+            document.getElementById("history").innerHTML = "";
+        }
+    </script>
 </body>
 </html>
