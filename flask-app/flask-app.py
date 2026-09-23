@@ -54,12 +54,11 @@ def CheckUserGuess(Answer, CharacterPositions, UserGuess):
 
 '''
 Description:
-    Generates a random word for the client based on their unique ID.
-Required Variables: WordList, Client_id
+    Generates a random word for the client.
+Required Variables: WordList
 Prerequisite Functions:
     random
-    uuid
-    os
+    os (only if Debug is True)
 Returns:
     Answer: the randomly selected word
     CharacterPositions: dictionary containing the positions of each character in the word
@@ -70,11 +69,6 @@ Impact_Player: The Game will have an answer to guess
 '''
 
 def GenRandomWord(WordList):
-    Client_id = Session.get('Uid')
-    if Client_id is None:
-        Client_id = str(uuid.uuid4())
-        Session['Uid'] = Client_id
-    random.seed(Client_id)
     Answer = random.choice(WordList)
     CharacterPositions = {"char1": Answer[0], "char2": Answer[1], "char3": Answer[2], "char4": Answer[3], "char5": Answer[4]}
     if Debug == True:
