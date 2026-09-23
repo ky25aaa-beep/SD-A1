@@ -18,20 +18,20 @@ Debug = True #enable or disable debug mode
 
 #required functions
 
-# Description
 '''
-Required Variables: Answer, UserGuess, CharacterPositions
-Optional Variables: ResultKnownPositions, ResultUnknownPositions
-
-Takes Guess and compares it against the Answer in two parts:
-part 1: checks for correct letters in the correct positions
-part 2: checks for correct letters in incorrect positions
+Description:
+    Takes Guess and compares it against the Answer in two parts:
+    part 1: checks for correct letters in the correct positions
+    part 2: checks for correct letters in incorrect positions
+Required Variables: Answer, CharacterPositions, UserGuess
 Returns:
     ResultKnownPositions: dictionary containing letters in correct positions
     UserGuess: string indicating if the guess is "Correct" or "Incorrect"
     ResultUnknownPositions: list containing letters in incorrect positions
+Result: Compares a guess against the answer.
+Impact_Player: The player's guess is scored, letter by letter.
 '''
-def CheckUserGuess(Answer, CharacterPositions, UserGuess, ResultKnownPositions, ResultUnknownPositions):
+def CheckUserGuess(Answer, CharacterPositions, UserGuess):
     ResultKnownPositions = {"char1": "", "char2": "", "char3": "", "char4": "", "char5": ""}
     ResultUnknownPositions = []
     for Index in range(5):
@@ -56,9 +56,17 @@ def CheckUserGuess(Answer, CharacterPositions, UserGuess, ResultKnownPositions, 
 Description:
     Generates a random word for the client based on their unique ID.
 Required Variables: WordList, Client_id
+Prerequisite Functions:
+    random
+    uuid
+    os
 Returns:
     Answer: the randomly selected word
     CharacterPositions: dictionary containing the positions of each character in the word
+
+Result: Generates a New Random Word
+Impact_Player: The Game will have an answer to guess
+
 '''
 
 def GenRandomWord(WordList):
@@ -74,91 +82,158 @@ def GenRandomWord(WordList):
     return Answer, CharacterPositions
 
 
-
-
 def GenerateWordle_hash(Answer):
     Key = CurrentApp.secret_key
     # creates a hash that can be used by the client/server to verify no tampering with the answer, but the hash cant be used to determine if a future wordle is using the same answer by confirming the hash is the same as one seen in the past.
     return sha256(((Key.hex() if isinstance(Key, bytes) else str(Key)) + Answer).encode()).hexdigest()
 
-
-def Handler_api(Data):
-    print("Received:", Data)
-    if Data["api_v2_data"]["cmd"] == "initialise":
-        if 'Answer' not in Session or 'Wordle_hash' not in Session:
-            NewAnswer, NewCharacterPositions = GenRandomWord(WordList)
-            Session['Answer'] = NewAnswer
-            Session['CharacterPositions'] = NewCharacterPositions
-            Session['Wordle_hash'] = GenerateWordle_hash(NewAnswer)
-            if Debug == True:
-                print(f"Stored answer in session: {NewAnswer}")
-        return {"status": "initialised", "WORDLE_HASH": Session['Wordle_hash']}
-    elif Data["api_v2_data"]["cmd"] == "get_Guess_Result":
-        Guess = Data["api_v2_data"]["GUESS"]
-        PreviousGuess = Data["api_v2_data"]["PreviousGuess"]
-        KnownPositions = Data["api_v2_data"]["KnownPositions"]
-        KnownLettersWithoutPosition = Data["api_v2_data"]["KnownLettersWithoutPosition"]
-        ClientWordle_hash = Data["api_v2_data"]["WORDLE_HASH"]
-        Account_id = Data["api_v2_data"]["Account_ID"]
-        #check if the answer exists in session
-        if 'Answer' not in Session or 'CharacterPositions' not in Session or 'Wordle_hash' not in Session:
-            NewAnswer, NewCharacterPositions = GenRandomWord(WordList)
-            Session['Answer'] = NewAnswer
-            Session['CharacterPositions'] = NewCharacterPositions
-            Session['Wordle_hash'] = GenerateWordle_hash(NewAnswer)
-            if Debug == True:
-                print(f"Stored answer in session: {NewAnswer}")
-                print(f"Stored character positions in session: {NewCharacterPositions}")
-
-        # verify the client's hash matches what the server has for this session -
-        # only block when the client claims to already have a hash and it's wrong
-        if ClientWordle_hash and ClientWordle_hash != Session['Wordle_hash']:
-            return {
-                "error": "State mismatch - word may have changed, syncing",
-                "WORDLE_HASH": Session['Wordle_hash']
-            }
-
-        if Guess != "":
-            if 'Guesses' not in Session:
-                Session['Guesses'] = []
-            if len(Session['Guesses']) < 4:
-                ResultKnownPositions, UserGuessStatus, ResultUnknownPositions = CheckUserGuess(Session['Answer'], Session['CharacterPositions'], Guess, KnownPositions, KnownLettersWithoutPosition)
-                Session['Guesses'].append(Guess)
-            else:
-                ResultKnownPositions = {}
-                UserGuessStatus = "Maximum guesses reached"
-                ResultUnknownPositions = []
+'''
+Description:
+    Picks a fresh word for this client and stores it (with its hash) in the session, resetting any guesses so far.
+Required Variables: WordList, Session, Debug
+Prerequisite Functions:
+    GenRandomWord
+    GenerateWordle_hash
+Returns: None
+Result: Stores a new word and its hash in the session.
+Impact_Player: The Game will either reset/initialise
+'''
+def StoreNewWordInSession():
+    NewAnswer, NewCharacterPositions = GenRandomWord(WordList)
+    Session['Answer'] = NewAnswer
+    Session['CharacterPositions'] = NewCharacterPositions
+    Session['Wordle_hash'] = GenerateWordle_hash(NewAnswer)
+    Session['Guesses'] = []
+    if Debug == True:
+        print(f"Stored answer in session: {NewAnswer}")
+        print(f"Stored character positions in session: {NewCharacterPositions}")
 
 
-            return {
-                "result_known_positions": ResultKnownPositions,
-                "user_guess_status": UserGuessStatus,
-                "result_unknown_positions": ResultUnknownPositions,
-                "answer": Session['Answer'],
-                "WORDLE_HASH": Session['Wordle_hash']
-            }
-        else:
-            return {
-                "result_known_positions": {},
-                "user_guess_status": "No guess provided",
-                "result_unknown_positions": [],
-                "WORDLE_HASH": Session['Wordle_hash']
-            }
-    elif Data["api_v2_data"]["cmd"] == "Generate_New_Word":
-        NewAnswer, NewCharacterPositions = GenRandomWord(WordList)
-        Session['Answer'] = NewAnswer
-        Session['CharacterPositions'] = NewCharacterPositions
-        Session['Guesses'] = []  # Reset the guesses for the new word
-        Session['Wordle_hash'] = GenerateWordle_hash(NewAnswer)
-        if Debug == True:
-            print(f"Stored new answer in session: {NewAnswer}")
-            print(f"Stored new character positions in session: {NewCharacterPositions}")
+'''
+Description:
+    Ensures that the session has a word and its hash, generating a new one if necessary.
+Required Variables: Session
+Prerequisite Functions:
+    StoreNewWordInSession
+    GenRandomWord
+    GenerateWordle_hash
+Returns: None
+Result: Guarantees that the session has a word and its hash.
+Impact_Player: 
+    In the event that the session does not have a word or its hash, a new word will be generated and stored (e.g., to handle Client Server mismatch due to restarts etc)
+
+'''
+def EnsureSessionHasWord():
+    if 'Answer' not in Session or 'CharacterPositions' not in Session or 'Wordle_hash' not in Session:
+        StoreNewWordInSession()
+
+'''
+Description:
+    Handles the "initialise" command from the client, ensuring a word exists for this session and returning its hash.
+Required Variables: Session
+Prerequisite Functions:
+    EnsureSessionHasWord
+Returns: Dictionary containing the status and the WORDLE_HASH.
+Result: Guarantees that the client has the current word's hash.
+Impact_Player: the game will start or continue with the current word's hash available to the client.
+'''
+
+def HandleInitialise(Data):
+    EnsureSessionHasWord()
+    return {"status": "initialised", "WORDLE_HASH": Session['Wordle_hash']}
+
+
+'''
+Description:
+    Handles the "get_Guess_Result" command from the client, checking a submitted guess against the session's answer and returning the result.
+    Only GUESS and WORDLE_HASH are read from the request - the client doesn't need to track or resend
+    known-letter state, since the full known/unknown positions come back in every response.
+Required Variables: Session, Data
+Prerequisite Functions:
+    EnsureSessionHasWord
+    CheckUserGuess
+Returns: Dictionary containing the result of the guess, the user's guess status, and the current word's hash.
+Result: Provides feedback on the user's guess and updates the session's guess history.
+Impact_Player: The player receives feedback on their guess, including known positions, unknown positions, and the status of their guess.
+'''
+def HandleGuessResult(Data):
+    Guess = Data["api_v2_data"]["GUESS"]
+    ClientWordle_hash = Data["api_v2_data"]["WORDLE_HASH"]
+
+    EnsureSessionHasWord()
+
+    # verify the client's hash matches what the server has for this session -
+    # only block when the client claims to already have a hash and it's wrong
+    if ClientWordle_hash and ClientWordle_hash != Session['Wordle_hash']:
+        return {
+            "error": "State mismatch - word may have changed, syncing",
+            "WORDLE_HASH": Session['Wordle_hash']
+        }
+
+    if Guess == "":
         return {
             "result_known_positions": {},
-            "user_guess_status": "New word generated",
+            "user_guess_status": "No guess provided",
             "result_unknown_positions": [],
             "WORDLE_HASH": Session['Wordle_hash']
         }
+
+    if 'Guesses' not in Session:
+        Session['Guesses'] = []
+
+    if len(Session['Guesses']) < 4:
+        ResultKnownPositions, UserGuessStatus, ResultUnknownPositions = CheckUserGuess(
+            Session['Answer'], Session['CharacterPositions'], Guess
+        )
+        Session['Guesses'].append(Guess)
+    else:
+        ResultKnownPositions = {}
+        UserGuessStatus = "Maximum guesses reached"
+        ResultUnknownPositions = []
+
+    return {
+        "result_known_positions": ResultKnownPositions,
+        "user_guess_status": UserGuessStatus,
+        "result_unknown_positions": ResultUnknownPositions,
+        "answer": Session['Answer'],
+        "WORDLE_HASH": Session['Wordle_hash']
+    }
+
+'''
+Description:
+    Handles the "Generate_New_Word" command from the client, discarding the current word and guesses and starting a fresh round for this session.
+Required Variables: Session
+Prerequisite Functions:
+    StoreNewWordInSession
+Returns: Dictionary containing the result of the new word generation and the current word's hash.
+Result: Starts a new round with a fresh word and resets the session's guess history.
+Impact_Player: The player receives a new word's hash and can start guessing from scratch.
+'''
+def HandleNewWord(Data):
+    StoreNewWordInSession()
+    return {
+        "result_known_positions": {},
+        "user_guess_status": "New word generated",
+        "result_unknown_positions": [],
+        "WORDLE_HASH": Session['Wordle_hash']
+    }
+
+
+# maps each incoming cmd to the function that handles it
+Cmd_handlers = {
+    "initialise": HandleInitialise,
+    "get_Guess_Result": HandleGuessResult,
+    "Generate_New_Word": HandleNewWord,
+}
+
+
+def Handler_api(Data):
+    print("Received:", Data)
+    Cmd = Data["api_v2_data"]["cmd"]
+    Handler = Cmd_handlers.get(Cmd)
+    if Handler is None:
+        return {"error": f"Unknown cmd: {Cmd}"}
+    return Handler(Data)
 
 
 

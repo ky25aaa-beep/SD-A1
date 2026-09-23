@@ -18,29 +18,45 @@
     <h2>Guess history</h2>
     <ul id="history"></ul>
 
+    <hr>
+    <h2>Debug</h2>
+    <button onclick="reinitialise()">Re-initialise session</button>
+    <button onclick="newWord()">Reset (new word)</button>
+    <button onclick="clearHistory()">Clear history display</button>
+    <p>Current WORDLE_HASH: <span id="hashDisplay"></span></p>
+    <p>Last raw response:</p>
+    <pre id="debugOutput">(none yet)</pre>
+
     <script>
-        let previousGuess = "";
-        let knownPositions = {};
-        let knownLettersWithoutPosition = [];
+        // only two things need to travel with a guess request: the guess itself,
+        // and the hash proving this client's state matches the server's session
+        let wordleHash = "";
 
         async function callApi(cmd, guess) {
+            const payload = { cmd: cmd, WORDLE_HASH: wordleHash };
+            if (guess !== undefined) {
+                payload.GUESS = guess;
+            }
+
             const response = await fetch("/api", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    api_v2_data: {
-                        cmd: cmd,
-                        Account_ID: "anon",
-                        PreviousGuess: previousGuess,
-                        KnownPositions: knownPositions,
-                        KnownLettersWithoutPosition: knownLettersWithoutPosition,
-                        WORDLE_HASH: "",
-                        GUESS: guess || ""
-                    }
-                })
+                body: JSON.stringify({ api_v2_data: payload })
             });
-            return response.json();
+            const data = await response.json();
+
+            document.getElementById("debugOutput").textContent = JSON.stringify(data, null, 2);
+            if (data && data.WORDLE_HASH) {
+                wordleHash = data.WORDLE_HASH;
+                document.getElementById("hashDisplay").textContent = wordleHash;
+            }
+            return data;
         }
+
+        async function reinitialise() {
+            await callApi("initialise");
+        }
+        reinitialise();
 
         async function submitGuess() {
             const guess = document.getElementById("guessInput").value.toLowerCase();
@@ -49,14 +65,15 @@
                 return;
             }
 
-            const data = await callApi("submit_guess", guess);
+            const data = await callApi("get_Guess_Result", guess);
 
-            previousGuess = guess;
-            if (data.result_known_positions) {
-                knownPositions = data.result_known_positions;
+            if (!data) {
+                document.getElementById("status").textContent = "Server returned no data — check console/logs";
+                return;
             }
-            if (data.result_unknown_positions) {
-                knownLettersWithoutPosition = data.result_unknown_positions;
+            if (data.error) {
+                document.getElementById("status").textContent = data.error;
+                return;
             }
 
             document.getElementById("status").textContent = data.user_guess_status || "";
@@ -80,12 +97,13 @@
 
         async function newWord() {
             const data = await callApi("Generate_New_Word");
-            previousGuess = "";
-            knownPositions = {};
-            knownLettersWithoutPosition = [];
             document.getElementById("status").textContent = data.user_guess_status || "";
             document.getElementById("known").textContent = "";
             document.getElementById("unknown").textContent = "";
+            clearHistory();
+        }
+
+        function clearHistory() {
             document.getElementById("history").innerHTML = "";
         }
     </script>
