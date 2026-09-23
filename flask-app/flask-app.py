@@ -8,7 +8,7 @@ import datetime
 global Debug
 from hashlib import sha256
 import uuid
-from flask import session
+from flask import session, current_app
 #set secret
 ##required constants
 wordlist = ["apple", "grape", "peach", "berry", "mango", "lemon", "space", "melon", "plums", "apric"]
@@ -16,7 +16,7 @@ Debug = True
 
 
 
-#required functions #upate word to generate a custom random word for a set client
+#required functions
 def check_user_guess(answer, character_positions, user_guess, result_known_positions, result_unknown_positions):
     result_known_positions = {"char1": "", "char2": "", "char3": "", "char4": "", "char5": ""}
     result_unknown_positions = []
@@ -57,10 +57,27 @@ def random_word_for_session(wordlist):
     return random_word_for_client(wordlist, client_id)
 
 
+def get_secret_hex():
+    key = current_app.secret_key
+    return key.hex() if isinstance(key, bytes) else str(key)
+
+
+def generate_wordle_hash(answer):
+    # creates a hash that can be used by the client/server to verify no tampering with the answer, but the hash cant be used to determine if a future wordle is using the same answer by confirming the hash is the same as one seen in the past.
+    return sha256((get_secret_hex() + answer).encode()).hexdigest()
+
+
 def api_handler(data):
     print("Received:", data)
     if data["api_v2_data"]["cmd"] == "initialise":
-        return {"status": "initialised"}
+        if 'answer' not in session or 'wordle_hash' not in session:
+            get_answer, character_positions = random_word_for_session(wordlist)
+            session['answer'] = get_answer
+            session['character_positions'] = character_positions
+            session['wordle_hash'] = generate_wordle_hash(get_answer)
+            if Debug == True:
+                print(f"Stored answer in session: {get_answer}")
+        return {"status": "initialised", "WORDLE_HASH": session['wordle_hash']}
     elif data["api_v2_data"]["cmd"] == "get_Guess_Result":
         guess = data["api_v2_data"]["GUESS"]
         previous_guess = data["api_v2_data"]["PreviousGuess"]
@@ -69,13 +86,22 @@ def api_handler(data):
         wordle_hash = data["api_v2_data"]["WORDLE_HASH"]
         account_id = data["api_v2_data"]["Account_ID"]
         #check if the answer exists in session
-        if 'answer' not in session or 'character_positions' not in session:
+        if 'answer' not in session or 'character_positions' not in session or 'wordle_hash' not in session:
             get_answer, character_positions = random_word_for_session(wordlist)
             session['answer'] = get_answer
             session['character_positions'] = character_positions
+            session['wordle_hash'] = generate_wordle_hash(get_answer)
             if Debug == True:
                 print(f"Stored answer in session: {get_answer}")
                 print(f"Stored character positions in session: {character_positions}")
+
+        # verify the client's hash matches what the server has for this session -
+        # only block when the client claims to already have a hash and it's wrong
+        if wordle_hash and wordle_hash != session['wordle_hash']:
+            return {
+                "error": "State mismatch - word may have changed, syncing",
+                "WORDLE_HASH": session['wordle_hash']
+            }
 
         if guess != "":
             if 'guesses' not in session:
@@ -93,26 +119,30 @@ def api_handler(data):
                 "result_known_positions": result_known_positions,
                 "user_guess_status": user_guess_status,
                 "result_unknown_positions": result_unknown_positions,
-                "answer": session['answer']
+                "answer": session['answer'],
+                "WORDLE_HASH": session['wordle_hash']
             }
         else:
             return {
                 "result_known_positions": {},
                 "user_guess_status": "No guess provided",
-                "result_unknown_positions": []
+                "result_unknown_positions": [],
+                "WORDLE_HASH": session['wordle_hash']
             }
     elif data["api_v2_data"]["cmd"] == "Generate_New_Word":
         get_answer, character_positions = random_word_for_session(wordlist)
         session['answer'] = get_answer
         session['character_positions'] = character_positions
         session['guesses'] = []  # Reset the guesses for the new word
+        session['wordle_hash'] = generate_wordle_hash(get_answer)
         if Debug == True:
             print(f"Stored new answer in session: {get_answer}")
             print(f"Stored new character positions in session: {character_positions}")
         return {
             "result_known_positions": {},
             "user_guess_status": "New word generated",
-            "result_unknown_positions": []
+            "result_unknown_positions": [],
+            "WORDLE_HASH": session['wordle_hash']
         }
     
 

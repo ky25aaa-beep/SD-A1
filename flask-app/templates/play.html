@@ -22,6 +22,7 @@
         let previousGuess = "";
         let knownPositions = {};
         let knownLettersWithoutPosition = [];
+        let wordleHash = "";
 
         async function callApi(cmd, guess) {
             const response = await fetch("/api", {
@@ -34,13 +35,22 @@
                         PreviousGuess: previousGuess,
                         KnownPositions: knownPositions,
                         KnownLettersWithoutPosition: knownLettersWithoutPosition,
-                        WORDLE_HASH: "",
+                        WORDLE_HASH: wordleHash,
                         GUESS: guess || ""
                     }
                 })
             });
             return response.json();
         }
+
+        async function initGame() {
+            const data = await callApi("initialise");
+            if (data && data.WORDLE_HASH) {
+                wordleHash = data.WORDLE_HASH;
+            }
+        }
+        initGame();
+
 
         async function submitGuess() {
             const guess = document.getElementById("guessInput").value.toLowerCase();
@@ -49,9 +59,22 @@
                 return;
             }
 
-            const data = await callApi("submit_guess", guess);
+            const data = await callApi("get_Guess_Result", guess);
+
+            if (!data) {
+                document.getElementById("status").textContent = "Server returned no data — check console/logs";
+                return;
+            }
+            if (data.error) {
+                document.getElementById("status").textContent = data.error;
+                if (data.WORDLE_HASH) wordleHash = data.WORDLE_HASH;
+                return;
+            }
 
             previousGuess = guess;
+            if (data.WORDLE_HASH) {
+                wordleHash = data.WORDLE_HASH;
+            }
             if (data.result_known_positions) {
                 knownPositions = data.result_known_positions;
             }
@@ -83,6 +106,9 @@
             previousGuess = "";
             knownPositions = {};
             knownLettersWithoutPosition = [];
+            if (data && data.WORDLE_HASH) {
+                wordleHash = data.WORDLE_HASH;
+            }
             document.getElementById("status").textContent = data.user_guess_status || "";
             document.getElementById("known").textContent = "";
             document.getElementById("unknown").textContent = "";
