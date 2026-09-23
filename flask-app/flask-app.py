@@ -58,17 +58,7 @@ def random_word_for_session(wordlist):
 
 
 def api_handler(data):
-#{
-#    "api_v2_data": {
-#        "cmd": "get_Guess_Result",
-#        "Account_ID": "anon",
-#        "PreviousGuess": "your_previous_guess_value",
-#        "KnownPositions": "your_known_positions_value",
-#        "KnownLettersWithoutPosition": "your_known_letters_value",
-#        "WORDLE_HASH": "your_wordle_hash_value"
-#        "GUESS": "your_guess_value"
-#    }   
-#}
+    print("Received:", data)
     if data["api_v2_data"]["cmd"] == "initialise":
         return {"status": "initialised"}
     elif data["api_v2_data"]["cmd"] == "get_Guess_Result":
