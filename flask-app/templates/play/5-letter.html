@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/play/css/main.css">
+    <title>Wordle Game</title>
+    <script src="/play/js/5-letter-game.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <h1 class="characters" aria-label="Wordle">
+        <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
+    </h1>
+    <!-- Guess Rows -->
+    <div class="board">
+        <div class="row" guess_number="1" role="link" tabindex="0" id="row-1">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+        </div>
+        <div class="row" guess_number="2" role="link" tabindex="0" id="row-2">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+        </div>
+        <div class="row hover-to-red" guess_number="3" role="link" tabindex="0" id="row-3">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+        </div>
+        <div class="row" guess_number="4" role="link" tabindex="0" id="row-4">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+        </div>
+        <div class="row" guess_number="5" role="link" tabindex="0" id="row-5">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+            <input maxlength="1"  class="character empty">
+        </div>
+    </div>
+
+</body>
+</html>

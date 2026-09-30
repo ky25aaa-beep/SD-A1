@@ -267,6 +267,11 @@ def FlaskUI():
     @App.route("/play/js/<path:filename>")
     def Play_js(filename):
         return flask.send_from_directory("templates/play/js", filename)
+    
+    @App.route("/play/css/<path:filename>")
+    def Play_css(filename):
+        return flask.send_from_directory("templates/play/css", filename)
+
 
     @App.route("/js/<path:filename>")
     def Js_alias(filename):

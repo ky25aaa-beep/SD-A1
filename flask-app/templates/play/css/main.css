@@ -1,32 +1,35 @@
-        body {
-            background: #15161b;
-            color: #eceef2;
-            font-family: monospace;
-            text-align: center;
-            padding: 2rem;
-        }
+body {
+    background: #15161b;
+    color: #eceef2;
+    font-family: monospace;
+    text-align: center;
+    padding: 2rem;
+}
 
-        .character {
-            display: inline-grid;
-            place-items: center;
-            width: 2.6rem;
-            height: 2.6rem;
-            margin: 0.2px;
-            margin-top: 5px;
-            font-size: 1.3rem; /* half of 2.6rem width and height */
-            font-weight: bold;
-        }
+.character {
+    display: inline-grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin: 0.2px;
+    margin-top: 5px;
+    font-size: 1.3rem; /* half of 2.6rem width and height */
+    font-weight: bold;
+}
 
-        /* correct letter, correct position */
-        .known { background: #4f9d69; }
+/* correct letter, correct position */
+.known { background: #4f9d69; }
 
-        /* correct letter, wrong position */
-        .unknown { background: #f2b134; color: #1a1200; }
+/* correct letter, wrong position */
+.unknown { background: #f2b134; color: #1a1200; }
 
-        /* letter not in the word */
-        .absent { background: #1e2027; color: #8a8d99; }
-        li, ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+/* letter not in the word */
+.absent { background: #1e2027; color: #8a8d99; }
+/*Row not yet guessed*/
+.empty { background: #6a6d75; color: #8a8d99; }
+li, ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
