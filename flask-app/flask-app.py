@@ -248,9 +248,31 @@ def FlaskUI():
 
     @App.route("/play")
     def Play_page():
-        return flask.render_template("play.html")
+        WordLength = flask.request.args.get("WordLength", type=int)
+        if WordLength is None:
+            WordLength = flask.request.args.get("wordlength", default=5, type=int)
+        if WordLength not in [5, 6, 7]:
+            WordLength = 5
+        Session['WordLength'] = WordLength
+        return flask.render_template(f"play/{WordLength}-letter.html")
+    #css
+    @App.route("/main.css")
+    def Main_css():
+        return flask.send_from_directory("templates", "main.css")
+
+    @App.route("/play/test-api-guess")
+    def Play_test_api_guess_page():
+        return flask.render_template("play/test-api-guess.html")
+
+    @App.route("/play/js/<path:filename>")
+    def Play_js(filename):
+        return flask.send_from_directory("templates/play/js", filename)
+
+    @App.route("/js/<path:filename>")
+    def Js_alias(filename):
+        return flask.send_from_directory("templates/play/js", filename)
 
     App.run(debug=True)
 
-if __name__ == "__main__":
+if __name__ == "__main__": # only run this code when the file is executed directly, not when it's imported as a module elsewhere
     FlaskUI()

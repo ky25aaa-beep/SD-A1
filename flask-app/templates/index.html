@@ -3,10 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="main.css">
+    <title>Wordle Game</title>
 </head>
 <body>
-    Wordle Front Page
-    <a href="/play?wordlength=5">play 5 letter-word game</a>
+    <h1 class="characters" aria-label="Wordle">
+        <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
+    </h1>
+    <!-- Options for choosing word length -->
+    <div class="board">
+    <div class="row hover-to-green" data-word-length="5" role="link" tabindex="0">
+        <span class="character unknown">5</span>
+        <span class="character unknown">-</span>
+        <span class="character unknown">L</span>
+        <span class="character unknown">E</span>
+        <span class="character unknown">T</span>
+        <span class="character unknown">T</span>
+        <span class="character unknown">E</span>
+        <span class="character unknown">R</span>
+    </div>
+    <div class="row hover-to-red" data-word-length="6" role="link" tabindex="0">
+        <span class="character absent">6</span>
+        <span class="character absent">-</span>
+        <span class="character absent">L</span>
+        <span class="character absent">E</span>
+        <span class="character absent">T</span>
+        <span class="character absent">T</span>
+        <span class="character absent">E</span>
+        <span class="character absent">R</span>
+    </div>
+    <div class="row hover-to-red" data-word-length="7" role="link" tabindex="0">
+        <span class="character absent">7</span>
+        <span class="character absent">-</span>
+        <span class="character absent">L</span>
+        <span class="character absent">E</span>
+        <span class="character absent">T</span>
+        <span class="character absent">T</span>
+        <span class="character absent">E</span>
+        <span class="character absent">R</span>
+    </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".row[data-word-length]").forEach(row => {
+
+            const wordLength = row.dataset.wordLength;
+            const goToPlay = () => window.location.href = `/play?WordLength=${wordLength}`;
+
+            const tryPlay = () => {
+                if (wordLength > 5) {
+                    alert("Word Lengths of 6/7 are not supported");
+                    return;
+                }
+                goToPlay();
+            };
+
+            row.addEventListener("click", tryPlay);
+            row.addEventListener("keydown", event => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    tryPlay();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
