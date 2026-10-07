@@ -51,12 +51,3 @@ async function ConvertRowtoGuess() {
     alert(guess)
 }
 
-$(".character .empty").keyup(function () {
-    if (this.value.length == this.maxLength) {
-      var $next = $(this).next('.character .empty');
-      if ($next.length)
-          $(this).next('.character .empty').focus();
-      else
-          $(this).blur();
-    }
-});

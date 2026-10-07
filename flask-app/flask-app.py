@@ -254,7 +254,7 @@ def FlaskUI():
         if WordLength not in [5, 6, 7]:
             WordLength = 5
         Session['WordLength'] = WordLength
-        return flask.render_template(f"play/{WordLength}-letter.html")
+        return flask.render_template(f"play/{WordLength}-letter-old.html")
     #css
     @App.route("/main.css")
     def Main_css():
