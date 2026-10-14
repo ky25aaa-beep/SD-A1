@@ -1,7 +1,7 @@
 //simplify code use plain js functions and remove unnecessary code
 
 //generate a random 5 letter word from the list of words
-const wordList = ["apple", "grape", "peach", "berry", "mango", "lemon", "melon", "cherry", "plum", "guava"];
+var wordList = ["apple", "grape", "peach", "berry", "mango", "lemon", "melon", "cherry", "plum", "guava"];
 function load_wordlist(){
     /* https://darkermango.github.io/5-Letter-words/words.json */
     /* fetch the word list from the url and store it in local storage */
