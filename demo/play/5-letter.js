@@ -111,6 +111,16 @@ async function flashCurrentGuess() {
 User should be able to type letters into the current guess row, and when they press Enter, the guess should be submitted. 
 
 */
+async function handleGuess(guess) {
+    /*check if guess is valid word */
+    /*is guess in wordlist? */
+    var wordList = JSON.parse(localStorage.getItem("wordList") || "[]");
+    if (!wordList.includes(guess)) {
+        alert("Invalid word. Please try again.");
+        return;
+    }
+    GET_guess_result(guess);
+}
 async function ConvertRowtoGuess() {
     const current_row = document.getElementById(`row-${current_guess_number}`);
     if (!current_row) return;
@@ -128,7 +138,7 @@ async function ConvertRowtoGuess() {
     }
 
     if (typeof GET_guess_result === 'function') {
-        GET_guess_result(guess);
+        handleGuess(guess);
     } else {
         console.error('GET_guess_result is not available yet.');
     }

@@ -2,6 +2,29 @@
 
 //generate a random 5 letter word from the list of words
 const wordList = ["apple", "grape", "peach", "berry", "mango", "lemon", "melon", "cherry", "plum", "guava"];
+function load_wordlist(){
+    /* https://darkermango.github.io/5-Letter-words/words.json */
+    /* fetch the word list from the url and store it in local storage */
+    if (!localStorage.getItem("wordList")) {
+    fetch("https://darkermango.github.io/5-Letter-words/words.json")
+        .then(response => response.json())
+        .then(data => {
+            /* make global varaible wordList and store the data in it */
+            wordList = data;
+            /* store the word list in local storage */
+            localStorage.setItem("wordList", JSON.stringify(wordList));
+        })
+        .catch(error => {
+            console.error("Error fetching word list:", error);
+        });
+    } else {
+        /* if word list is already in local storage, load it into the global variable */
+        wordList = JSON.parse(localStorage.getItem("wordList"));
+    }    
+}
+load_wordlist();
+console.log("Word list loaded:", wordList);
+
 
 
 function GET_Random_Word() {
