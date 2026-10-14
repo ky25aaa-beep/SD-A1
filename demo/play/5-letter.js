@@ -61,6 +61,7 @@ async function Format_Result_and_display() {
         }
     }
     handleFlashAndInput();
+    current_row.children[0].focus();
     attachGuessSubmitHandler();
 
 }
@@ -123,7 +124,7 @@ function normaliseWordList(rawList) {
     return [];
 }
 
-async function handleGuess(guess) {
+function handleGuess(guess) {
     const rawWordList = JSON.parse(localStorage.getItem("wordList") || "[]");
     const wordList = normaliseWordList(rawWordList);
 
@@ -147,13 +148,14 @@ async function handleGuess(guess) {
                 }
             }
         }
+        current_row.children[0].focus();
         return false; // FIX: Moved outside the loop block so it runs after cleanup
     } else {
         GET_guess_result(lowerGuess);
         return true;
     }
 }
-async function ConvertRowtoGuess() {
+function ConvertRowtoGuess() {
     const current_row = document.getElementById(`row-${current_guess_number}`);
     if (!current_row) return false;
 
