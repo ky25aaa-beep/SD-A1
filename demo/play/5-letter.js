@@ -5,16 +5,13 @@
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
 var current_row = document.getElementById(`row-${current_guess_number}`);
-let currentNumber = 1;
-
-// Move this variable to the top of your script so both functions can see it
+let isunknown = false;
 let isFlashing = false; 
 
 async function flashCurrentGuess() {
     isFlashing = true; // Set to true when the flash starts
     
-    const currentNumber = 1;
-    const current_row = document.getElementById(`row-${currentNumber}`);
+    const current_row = document.getElementById(`row-${current_guess_number}`);
     if (!current_row) return;
 
     while (isFlashing) { // The loop will now exit if isFlashing becomes false
@@ -57,7 +54,6 @@ User should be able to type letters into the current guess row, and when they pr
 
 */
 async function ConvertRowtoGuess() {
-    var current_guess_number = 1;
     var current_row = document.getElementById(`row-${current_guess_number}`);
 
     var guess = "";
@@ -66,14 +62,16 @@ async function ConvertRowtoGuess() {
         let current_character = character.value;
         guess = guess + current_character;
     }
-    alert(guess)
+   /* Using /play/api/5-letter.js run GET_guess_result */
+
+    GET_guess_result(guess)
 }
 
 /*
 flash guess until the row is being clicked on/items are being types in that word, also once someone had typed a letter into that box move to the next box
 */
 function handleFlashAndInput() {
-  const currentRow = document.getElementById(`row-${currentNumber}`);
+  const currentRow = document.getElementById(`row-${current_guess_number}`);
   
   if (!currentRow) return; 
 
@@ -108,11 +106,26 @@ function handleFlashAndInput() {
 }
 
 handleFlashAndInput()
-/* 
-Using /play/api/5-letter.js
 
-Initialise Game
-Generate Random Word
-Make Guesses
-
-*/
+while (!isunknown) {
+    //get current words last character
+    /*  <div class="row" guess_number="1" role="link" tabindex="0" id="row-1">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+    */
+    var character5_selector = `#row-${current_guess_number} .character:nth-child(5)`;
+    var character5 = document.querySelector(character5_selector);
+    character5.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+        // if no letters are empty
+        if (Array.from(document.querySelectorAll(`#row-${current_guess_number} .character`)).every(input => input.value !== "")) {
+            ConvertRowtoGuess();
+        } else {
+            alert("Please fill in all letters before submitting your guess.");
+        }
+    }
+    })}

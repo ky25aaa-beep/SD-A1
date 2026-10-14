@@ -33,6 +33,11 @@ function initialiseGame() {
 }
 
 function GET_guess_result(guess) {
+    /* if guess storage is blank initialise game */
+    if (!localStorage.getItem("random_word")) {
+        initialiseGame();
+    }
+
     // Check hash matches answer if it does check answer and return result
     var random_word_hash_storage = localStorage.getItem("random_word_hash");
     var random_word_hash = atob(random_word_hash_storage);
@@ -40,7 +45,7 @@ function GET_guess_result(guess) {
         //check guess and return result
         if (guess == random_word) {
             var result = ["correct"]
-            var result_known_positions = { guess.charAt(0), guess.charAt(1), guess.charAt(2), guess.charAt(3), guess.charAt(4) }
+            var result_known_positions = { 0: guess.charAt(0), 1: guess.charAt(1), 2: guess.charAt(2), 3: guess.charAt(3), 4: guess.charAt(4) }
             var result_unknown_positions = {}
             localStorage.setItem("result", (result));
             localStorage.setItem("result_known_positions", (result_known_positions));
@@ -49,15 +54,29 @@ function GET_guess_result(guess) {
         } else {
             //compare letters and get unknown_positions (orange letters), known_positions (green), known_unused_letters (grey)
             //get grey letters
-            if (letters are not in answer) {
-                current character appends to end ofknown_unused_letters and local storage is updated with the value
-            } else
-            if (letter is in word) {
-                current character is appended to the end of unknown_positions
-            }
+            for (let i = 0; i < guess.length; i++) {
+                if (!random_word.includes(guess.charAt(i))) {
+                    var known_unused_letters = localStorage.getItem("known_unused_letters");
+                    known_unused_letters = known_unused_letters + guess.charAt(i);
+                    localStorage.setItem("known_unused_letters", (known_unused_letters));
+                } else if (random_word.includes(guess.charAt(i))) {
+                    //get unknown_positions (orange letters)
+                    var result_unknown_positions = localStorage.getItem("result_unknown_positions");
+                    result_unknown_positions = result_unknown_positions + guess.charAt(i);
+                    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
 
-            if (letter is in corect position) {
-                check
-                if it is in correct position,
-                    if it is add it to known_positions(andif it exists in unknown_positions remove it)
-            },
+                }
+                if (guess.charAt(i) === random_word.charAt(i)) {
+                    //get known_positions (green letters)
+                    var result_known_positions = localStorage.getItem("result_known_positions");
+                    result_known_positions = result_known_positions + guess.charAt(i);
+                    localStorage.setItem("result_known_positions", (result_known_positions));
+                    //if it is in correct position, if it is add it to known_positions(andif it exists in unknown_positions remove it)
+                    var result_unknown_positions = localStorage.getItem("result_unknown_positions");
+                    result_unknown_positions = result_unknown_positions.replace(guess.charAt(i), '');
+                    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
+                }
+            };
+        }
+    }
+}
