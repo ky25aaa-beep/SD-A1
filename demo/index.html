@@ -49,7 +49,7 @@
         document.querySelectorAll(".row[data-word-length]").forEach(row => {
 
             const wordLength = row.dataset.wordLength;
-            const goToPlay = () => window.location.href = `/play?WordLength=${wordLength}`;
+            const goToPlay = () => window.location.href = `/play/${wordLength}-letter.html`;
 
             const tryPlay = () => {
                 if (wordLength > 5) {
