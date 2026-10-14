@@ -1,26 +1,44 @@
 //simplify code use plain js functions and remove unnecessary code
 
+function normaliseWordList(rawList) {
+    if (Array.isArray(rawList)) {
+        return rawList;
+    }
+
+    if (rawList && Array.isArray(rawList.words)) {
+        return rawList.words;
+    }
+
+    return [];
+}
+
 //generate a random 5 letter word from the list of words
-var wordList = ["apple", "grape", "peach", "berry", "mango", "lemon", "melon", "cherry", "plum", "guava"];
+var wordList = [];
 function load_wordlist(){
     /* https://darkermango.github.io/5-Letter-words/words.json */
     /* fetch the word list from the url and store it in local storage */
-    if (!localStorage.getItem("wordList")) {
-    fetch("https://darkermango.github.io/5-Letter-words/words.json")
-        .then(response => response.json())
-        .then(data => {
-            /* make global varaible wordList and store the data in it */
-            wordList = data;
-            /* store the word list in local storage */
+    const storedWordList = localStorage.getItem("wordList");
+    const parsedStoredWordList = storedWordList ? JSON.parse(storedWordList) : [];
+    const normalisedStoredWordList = normaliseWordList(parsedStoredWordList);
+
+    if (normalisedStoredWordList.length > 0) {
+        wordList = normalisedStoredWordList;
+        if (!Array.isArray(parsedStoredWordList) || (parsedStoredWordList.words && Array.isArray(parsedStoredWordList.words))) {
             localStorage.setItem("wordList", JSON.stringify(wordList));
-        })
-        .catch(error => {
-            console.error("Error fetching word list:", error);
-        });
+        }
     } else {
-        /* if word list is already in local storage, load it into the global variable */
-        wordList = JSON.parse(localStorage.getItem("wordList"));
-    }    
+        fetch("https://darkermango.github.io/5-Letter-words/words.json")
+            .then(response => response.json())
+            .then(data => {
+                /* make global varaible wordList and store the data in it */
+                wordList = normaliseWordList(data);
+                /* store the word list in local storage */
+                localStorage.setItem("wordList", JSON.stringify(wordList));
+            })
+            .catch(error => {
+                console.error("Error fetching word list:", error);
+            });
+    }
 }
 load_wordlist();
 console.log("Word list loaded:", wordList);
@@ -28,8 +46,13 @@ console.log("Word list loaded:", wordList);
 
 
 function GET_Random_Word() {
-    var temp_random_number = Math.floor(Math.random() * wordList.length);
-    return wordList[temp_random_number];
+    const words = normaliseWordList(wordList);
+    if (!words.length) {
+        return "";
+    }
+
+    var temp_random_number = Math.floor(Math.random() * words.length);
+    return words[temp_random_number];
 }
 
 function initialiseGame() {
@@ -38,7 +61,7 @@ function initialiseGame() {
     console.log("Random word: " + random_word);
     localStorage.setItem("random_word", random_word);
     localStorage.setItem("random_word_hash", btoa(random_word));
-
+    console.log("Random word : " + (random_word));
     var result = [];
     var result_known_positions = {};
     var result_unknown_positions = [];

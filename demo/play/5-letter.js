@@ -111,19 +111,48 @@ async function flashCurrentGuess() {
 User should be able to type letters into the current guess row, and when they press Enter, the guess should be submitted. 
 
 */
+function normaliseWordList(rawList) {
+    if (Array.isArray(rawList)) {
+        return rawList;
+    }
+
+    if (rawList && Array.isArray(rawList.words)) {
+        return rawList.words;
+    }
+
+    return [];
+}
+
 async function handleGuess(guess) {
     /*check if guess is valid word */
     /*is guess in wordlist? */
-    var wordList = JSON.parse(localStorage.getItem("wordList") || "[]");
-    if (!wordList.includes(guess)) {
-        alert("Invalid word. Please try again.");
-        return;
+    const rawWordList = JSON.parse(localStorage.getItem("wordList") || "[]");
+    const wordList = normaliseWordList(rawWordList);
+
+    if (!wordList.length) {
+        alert("Word list is not available yet. Please refresh and try again.");
+        return false;
     }
-    GET_guess_result(guess);
+
+    const lowerGuess = (guess || '').toLowerCase();
+    if (!wordList.includes(lowerGuess)) {
+        alert("Invalid word. Please try again.");
+        /*clear character boxes in current row */
+        const current_row = document.getElementById(`row-${current_guess_number}`);
+        for (let i = 0; i < 5; i++) {
+            let character = current_row.children[i];
+            if (character) character.value = "";
+        }
+    } else {
+        GET_guess_result(lowerGuess);
+        return true;
+    }
+    
+
 }
 async function ConvertRowtoGuess() {
     const current_row = document.getElementById(`row-${current_guess_number}`);
-    if (!current_row) return;
+    if (!current_row) return false;
 
     let guess = "";
     const inputs = current_row.querySelectorAll('.character');
@@ -134,13 +163,14 @@ async function ConvertRowtoGuess() {
 
     if (guess.length !== 5) {
         alert("Please fill in all letters before submitting your guess.");
-        return;
+        return false;
     }
 
     if (typeof GET_guess_result === 'function') {
-        handleGuess(guess);
+        return handleGuess(guess);
     } else {
         console.error('GET_guess_result is not available yet.');
+        return false;
     }
 }
 
@@ -202,9 +232,11 @@ function attachGuessSubmitHandler() {
     /* if all the words have been filled and the user tabs out of the last box, submit the guess */
     lastInput.addEventListener('blur', function (e) {
         if (inputs.every(input => input.value !== '')) {
-            ConvertRowtoGuess();
-            console.log("Guess submitted on blur (tab out)")
-            Format_Result_and_display();
+            const guessSubmitted = ConvertRowtoGuess();
+            if (guessSubmitted) {
+                console.log("Guess submitted on blur (tab out)")
+                Format_Result_and_display();
+            }
         }
     });
 }
