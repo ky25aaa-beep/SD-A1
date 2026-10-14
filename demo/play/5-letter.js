@@ -5,6 +5,7 @@
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
 var current_row = document.getElementById(`row-${current_guess_number}`);
+let currentNumber = 1;
 
 // Move this variable to the top of your script so both functions can see it
 let isFlashing = false; 
@@ -72,7 +73,6 @@ async function ConvertRowtoGuess() {
 flash guess until the row is being clicked on/items are being types in that word, also once someone had typed a letter into that box move to the next box
 */
 function handleFlashAndInput() {
-  const currentNumber = 1;
   const currentRow = document.getElementById(`row-${currentNumber}`);
   
   if (!currentRow) return; 
@@ -97,7 +97,6 @@ function handleFlashAndInput() {
       const lastInput = inputs[inputs.length - 1];
       if (lastInput.value) {
         e.preventDefault();
-        alert("Too many letters press enter to submit guess");
       }
     }
   });
