@@ -124,8 +124,6 @@ function normaliseWordList(rawList) {
 }
 
 async function handleGuess(guess) {
-    /*check if guess is valid word */
-    /*is guess in wordlist? */
     const rawWordList = JSON.parse(localStorage.getItem("wordList") || "[]");
     const wordList = normaliseWordList(rawWordList);
 
@@ -137,18 +135,23 @@ async function handleGuess(guess) {
     const lowerGuess = (guess || '').toLowerCase();
     if (!wordList.includes(lowerGuess)) {
         alert("Invalid word. Please try again.");
-        /*clear character boxes in current row */
+        
         const current_row = document.getElementById(`row-${current_guess_number}`);
-        for (let i = 0; i < 5; i++) {
-            let character = current_row.children[i];
-            if (character) character.value = "";
+        if (current_row) {
+            // FIX: Run the full loop to clear all 5 blocks completely
+            for (let i = 0; i < 5; i++) {
+                let character = current_row.children[i];
+                if (character) {
+                    character.value = ""; // Clears the value property if using inputs
+                    character.textContent = ""; // Clears text content if using spans
+                }
+            }
         }
+        return false; // FIX: Moved outside the loop block so it runs after cleanup
     } else {
         GET_guess_result(lowerGuess);
         return true;
     }
-    
-
 }
 async function ConvertRowtoGuess() {
     const current_row = document.getElementById(`row-${current_guess_number}`);

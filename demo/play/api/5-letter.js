@@ -61,7 +61,6 @@ function initialiseGame() {
     console.log("Random word: " + random_word);
     localStorage.setItem("random_word", random_word);
     localStorage.setItem("random_word_hash", btoa(random_word));
-    console.log("Random word : " + (random_word));
     var result = [];
     var result_known_positions = {};
     var result_unknown_positions = [];
