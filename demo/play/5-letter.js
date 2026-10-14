@@ -6,22 +6,39 @@
 var current_guess_number = 1;
 var current_row = document.getElementById(`row-${current_guess_number}`);
 
+// Move this variable to the top of your script so both functions can see it
+let isFlashing = false; 
+
 async function flashCurrentGuess() {
-    while (true) {
+    isFlashing = true; // Set to true when the flash starts
+    
+    const currentNumber = 1;
+    const current_row = document.getElementById(`row-${currentNumber}`);
+    if (!current_row) return;
+
+    while (isFlashing) { // The loop will now exit if isFlashing becomes false
         for (let i = 0; i < 5; i++) {
             let character = current_row.children[i];
-            character.value = "_";
-            //
+            if (character) character.value = "_";
         }
-        //wait for 500ms
+        
         await new Promise(resolve => setTimeout(resolve, 500));
+        if (!isFlashing) break; // Check again after the wait
+
         for (let i = 0; i < 5; i++) {
             let character = current_row.children[i];
-            character.value = " ";
-            //
+            if (character) character.value = " ";
         }
-        //wait for 500ms
+        
         await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+    // Clean up: Clear the underscores/spaces when the flash stops
+    for (let i = 0; i < 5; i++) {
+        let character = current_row.children[i];
+        if (character && character.value === " " || character.value === "_") {
+            character.value = "";
+        }
     }
 }
 
@@ -55,33 +72,40 @@ async function ConvertRowtoGuess() {
 flash guess until the row is being clicked on/items are being types in that word, also once someone had typed a letter into that box move to the next box
 */
 function handleFlashAndInput() {
-    const currentNumber = 1; 
+  const currentNumber = 1;
+  const currentRow = document.getElementById(`row-${currentNumber}`);
+  
+  if (!currentRow) return; 
 
-    const currentRow = document.getElementById(`row-${currentNumber}`);
-    if (currentRow) {
-        const inputs = currentRow.querySelectorAll('.character');
+  const inputs = currentRow.querySelectorAll('.character');
 
-        currentRow.addEventListener('input', (e) => {
-            const index = Array.from(inputs).indexOf(e.target);
-            if (e.target.value && inputs[index + 1]) {
-                inputs[index + 1].focus();
-            }
-        });
+  // STOP THE FLASH WHEN SELECTED:
+  // The moment the user clicks or focuses any box in the row, the loop breaks
+  currentRow.addEventListener('focusin', () => {
+    isFlashing = false; 
+  });
 
-        currentRow.addEventListener('keydown', (e) => {
-            if (e.key.length === 1) {
-                const lastInput = inputs[inputs.length - 1];
-                if (lastInput.value) {
-                    e.preventDefault();
-                    alert("Too many letters press enter to submit guess");
-                }
-            }
-        });
+  currentRow.addEventListener('input', (e) => {
+    const index = Array.from(inputs).indexOf(e.target);
+    if (e.target.value && inputs[index + 1]) {
+      inputs[index + 1].focus();
     }
-    if (currentRow.children[0].value == "") {
-        flashCurrentGuess();
-    }else {
+  });
+
+  currentRow.addEventListener('keydown', (e) => {
+    if (e.key.length === 1) {
+      const lastInput = inputs[inputs.length - 1];
+      if (lastInput.value) {
+        e.preventDefault();
+        alert("Too many letters press enter to submit guess");
+      }
     }
+  });
+
+  // Start the flash if the first box is empty
+  if (inputs[0] && inputs[0].value === "") {
+    flashCurrentGuess();
+  }
 }
 
 handleFlashAndInput()

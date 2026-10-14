@@ -56,15 +56,31 @@
 
 </body>
 <script>
-    $(".character .empty").keyup(function() {
+    // 1. Move focus FORWARD when typing a letter
+    $(".character.empty").on('input', function() {
         if (this.value.length == this.maxLength) {
-            var $next = $(this).next('.character .empty');
-            if ($next.length)
-                $(this).next('.character .empty').focus();
-            else
+            var $next = $(this).next('.character.empty');
+            if ($next.length) {
+                $next.focus();
+            } else {
                 $(this).blur();
+            }
+        }
+    });
+
+    // 2. Move focus BACKWARD when pressing Backspace
+    $(".character.empty").on('keydown', function(e) {
+        if (e.key === 'Backspace') {
+            // If the box is already empty, move focus to the previous box and clear it
+            if (this.value === '') {
+                var $prev = $(this).prev('.character.empty');
+                if ($prev.length) {
+                    $prev.focus().val('');
+                    e.preventDefault(); // Stop extra browser deletion actions
+                }
+            }
         }
     });
 </script>
-
 </html>
+a
