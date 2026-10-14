@@ -13,6 +13,12 @@
 </head>
 
 <body>
+    <div id="message-container" class="message-container-hidden">
+        <h1 id="message-title"></h1>
+        <p id="message-content"></p>
+        <span id="message-close" class="message-close" role="button" tabindex="0">Close</span>
+    </div>
+        
     <h1 class="characters" aria-label="Wordle">
         <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
     </h1>
@@ -82,6 +88,10 @@
                 }
             }
         }
+    });
+    /* Event listener for the close button */
+    $('#message-close').on('click', function() {
+        $('#message-container').removeClass('message-container-visible').addClass('message-container-hidden');
     });
 </script>
 </html>

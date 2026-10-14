@@ -48,7 +48,7 @@ async function Format_Result_and_display() {
             }
         }
     } else if (current_guess_number > 6) {
-        alert("Game Over! The word was: " + localStorage.getItem("random_word"));
+        display_message("Game Over", "The word was: " + localStorage.getItem("random_word"));
         /* disable all the character boxes so that the user cannot type in them */
         for (let i = 1; i <= 6; i++) {
             let row = document.getElementById(`row-${i}`);
@@ -129,13 +129,13 @@ function handleGuess(guess) {
     const wordList = normaliseWordList(rawWordList);
 
     if (!wordList.length) {
-        alert("Word list is not available yet. Please refresh and try again.");
+        display_message("Word list unavailable", "Word list is not available yet. Please refresh and try again.");
         return false;
     }
 
     const lowerGuess = (guess || '').toLowerCase();
     if (!wordList.includes(lowerGuess)) {
-        alert("Invalid word. Please try again.");
+        display_message("Invalid word", "Please try again.");
         
         const current_row = document.getElementById(`row-${current_guess_number}`);
         if (current_row) {
@@ -167,7 +167,7 @@ function ConvertRowtoGuess() {
     });
 
     if (guess.length !== 5) {
-        alert("Please fill in all letters before submitting your guess.");
+        display_message("Missing letters", "Please fill in all letters before submitting your guess.");
         return false;
     }
 
@@ -230,7 +230,7 @@ function attachGuessSubmitHandler() {
             if (inputs.every(input => input.value !== '')) {
                 ConvertRowtoGuess();
             } else {
-                alert('Please fill in all letters before submitting your guess.');
+                display_message("Missing letters", "Please fill in all letters before submitting your guess.");
             }
         }
     });
@@ -246,5 +246,16 @@ function attachGuessSubmitHandler() {
     });
 }
 
+
+function display_message(title, content) {
+    const messageContainer = document.getElementById('message-container');
+    const messageTitle = document.getElementById('message-title');
+    const messageContent = document.getElementById('message-content');
+
+    messageTitle.textContent = title;
+    messageContent.textContent = content;
+    messageContainer.classList.remove('message-container-hidden');
+    messageContainer.classList.add('message-container-visible');
+}
 handleFlashAndInput();
 attachGuessSubmitHandler();
