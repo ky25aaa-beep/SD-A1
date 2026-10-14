@@ -12,24 +12,23 @@ function GET_Random_Word() {
 function initialiseGame() {
     //generate a random 5 letter word from the list of words
     var random_word = GET_Random_Word();
-
+    console.log("Random word: " + random_word);
     localStorage.setItem("random_word", random_word);
-    var random_word_hash = btoa(random_word);
-    localStorage.setItem("random_word_hash", random_word_hash);
-    //create blank result array and blank result_known_positions object and blank result_unknown_positions array and store them in local storage
+    localStorage.setItem("random_word_hash", btoa(random_word));
+
     var result = [];
     var result_known_positions = {};
     var result_unknown_positions = [];
-    var known_unused_letters = []
-    var prev_guesses = []
-    localStorage.setItem("prev_guesses", (prev_guesses))
-    localStorage.setItem("result", (result));
-    localStorage.setItem("result_known_positions", (result_known_positions));
-    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
-    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
+    var known_unused_letters = [];
+    var prev_guesses = [];
+
+    localStorage.setItem("prev_guesses", JSON.stringify(prev_guesses));
+    localStorage.setItem("result", JSON.stringify(result));
+    localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
+    localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
+    localStorage.setItem("known_unused_letters", JSON.stringify(known_unused_letters));
 
     return random_word;
-
 }
 
 function GET_guess_result(guess) {
@@ -37,46 +36,65 @@ function GET_guess_result(guess) {
     if (!localStorage.getItem("random_word")) {
         initialiseGame();
     }
-
-    // Check hash matches answer if it does check answer and return result
+    console.log("Guess: " + guess);
+    var random_word = localStorage.getItem("random_word");
     var random_word_hash_storage = localStorage.getItem("random_word_hash");
-    var random_word_hash = atob(random_word_hash_storage);
-    if (random_word_hash == random_word_hash_storage) {
-        //check guess and return result
-        if (guess == random_word) {
-            var result = ["correct"]
-            var result_known_positions = { 0: guess.charAt(0), 1: guess.charAt(1), 2: guess.charAt(2), 3: guess.charAt(3), 4: guess.charAt(4) }
-            var result_unknown_positions = {}
-            localStorage.setItem("result", (result));
-            localStorage.setItem("result_known_positions", (result_known_positions));
-            localStorage.setItem("result_unknown_positions", (result_unknown_positions));
+    var random_word_hash = atob(random_word_hash_storage || "");
 
-        } else {
-            //compare letters and get unknown_positions (orange letters), known_positions (green), known_unused_letters (grey)
-            //get grey letters
-            for (let i = 0; i < guess.length; i++) {
-                if (!random_word.includes(guess.charAt(i))) {
-                    var known_unused_letters = localStorage.getItem("known_unused_letters");
-                    known_unused_letters = known_unused_letters + guess.charAt(i);
-                    localStorage.setItem("known_unused_letters", (known_unused_letters));
-                } else if (random_word.includes(guess.charAt(i))) {
-                    //get unknown_positions (orange letters)
-                    var result_unknown_positions = localStorage.getItem("result_unknown_positions");
-                    result_unknown_positions = result_unknown_positions + guess.charAt(i);
-                    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
+    if (random_word_hash !== random_word) {
+        return;
+    }
 
-                }
-                if (guess.charAt(i) === random_word.charAt(i)) {
-                    //get known_positions (green letters)
-                    var result_known_positions = localStorage.getItem("result_known_positions");
-                    result_known_positions = result_known_positions + guess.charAt(i);
-                    localStorage.setItem("result_known_positions", (result_known_positions));
-                    //if it is in correct position, if it is add it to known_positions(andif it exists in unknown_positions remove it)
-                    var result_unknown_positions = localStorage.getItem("result_unknown_positions");
-                    result_unknown_positions = result_unknown_positions.replace(guess.charAt(i), '');
-                    localStorage.setItem("result_unknown_positions", (result_unknown_positions));
-                }
-            };
+    var normalized_guess = (guess || '').toLowerCase();
+
+    if (normalized_guess === random_word) {
+        var result = ["correct"];
+        var result_known_positions = { 0: normalized_guess.charAt(0), 1: normalized_guess.charAt(1), 2: normalized_guess.charAt(2), 3: normalized_guess.charAt(3), 4: normalized_guess.charAt(4) };
+        var result_unknown_positions = [];
+        localStorage.setItem("result", JSON.stringify(result));
+        localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
+        localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
+        return;
+    } else {
+        var result = ["incorrect"];
+        localStorage.setItem("result", JSON.stringify(result));
+    }
+
+    var result_known_positions = {};
+    var result_unknown_positions = [];
+    var known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
+
+    for (let i = 0; i < normalized_guess.length; i++) {
+        var letter = normalized_guess.charAt(i);
+        if (!random_word.includes(letter)) {
+            if (!known_unused_letters.includes(letter)) {
+                known_unused_letters.push(letter);
+            }
+        } else if (random_word.includes(letter)) {
+            if (!result_unknown_positions.includes(letter)) {
+                result_unknown_positions.push(letter);
+            }
+        }
+
+        if (letter === random_word.charAt(i)) {
+            result_known_positions[i] = letter;
+            result_unknown_positions = result_unknown_positions.filter(item => item !== letter);
         }
     }
+
+    localStorage.setItem("known_unused_letters", JSON.stringify(known_unused_letters));
+    localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
+    localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
+}
+
+/* function to reset the game if reset-button is pressed (reset session storage and reload the page) */
+function resetGame() {
+    localStorage.removeItem("random_word");
+    localStorage.removeItem("random_word_hash");
+    localStorage.removeItem("prev_guesses");
+    localStorage.removeItem("result");
+    localStorage.removeItem("result_known_positions");
+    localStorage.removeItem("result_unknown_positions");
+    localStorage.removeItem("known_unused_letters");
+    location.reload();
 }
