@@ -36,6 +36,9 @@ async function Format_Result_and_display() {
     /* move to the next row */
     current_guess_number++;
     current_row = document.getElementById(`row-${current_guess_number}`);
+    if (current_guess_number <= 6) {
+        close_input_row();
+    }
     if (result[0] === "correct") {
         /* disable all the character boxes so that the user cannot type in them */
         for (let i = 1; i <= 6; i++) {
@@ -170,6 +173,7 @@ function ConvertRowtoGuess() {
         display_message("Missing letters", "Please fill in all letters before submitting your guess.");
         return false;
     }
+    guess = guess.toLowerCase();
 
     if (typeof GET_guess_result === 'function') {
         return handleGuess(guess);
@@ -257,5 +261,28 @@ function display_message(title, content) {
     messageContainer.classList.remove('message-container-hidden');
     messageContainer.classList.add('message-container-visible');
 }
+function close_input_row() {
+    for (let i = 1; i <= 6; i++) {
+        let row = document.getElementById(`row-${i}`);
+        if (!row) continue;
+        if (i !== current_guess_number) {
+            let inputs = row.querySelectorAll('.character');
+            inputs.forEach((input) => {
+                input.disabled = true;
+            });
+        }
+    }
+    let row = document.getElementById(`row-${current_guess_number}`);
+    if (!row) return;
+    for (let j=0; j<5; j++) {
+        let input = row.children[j];
+        input.disabled = false;
+    }
+}
+close_input_row();
+
 handleFlashAndInput();
+
 attachGuessSubmitHandler();
+
+
