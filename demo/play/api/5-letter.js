@@ -143,3 +143,5 @@ function resetGame() {
     localStorage.removeItem("known_unused_letters");
     location.reload();
 }
+
+document.getElementById("reset-button").addEventListener("click", resetGame);
