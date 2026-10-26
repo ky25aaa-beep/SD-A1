@@ -2,6 +2,7 @@
 
 This project is a browser-based five-letter word guessing game. The player has up to six attempts to identify a hidden word, using feedback from each guess to make the next one. The intended purpose is to offer students and other puzzle players a short activity that exercises vocabulary, deduction, and problem-solving. The project began with a plan for five-, six-, and seven-letter modes, then narrowed to one five-letter game with accessibility for blind players as a design goal. The critical evaluation is in [evaluation.md](evaluation.md).
 
+Project url: [https://ky25aaa-beep.github.io/SD-A1/](https://ky25aaa-beep.github.io/SD-A1/)
 # Primary Target Audience
 
 Ritchey et al. (2023) present four Wordle-based activities designed to help students develop mathematical concepts including combinatorics, probability, and strategy. LinkedIn launched Wend as its eighth game on 9 June 2026; it asks players to find hidden words by connecting letters in a grid, with each letter used once (Smith, 2026). These examples informed the choice to use a short word puzzle to engage vocabulary, deduction, and analytical thinking. The project targets students and academics interested in this kind of challenge, while prioritising access for blind players who use screen readers.
@@ -100,10 +101,10 @@ Accessibility requirements are informed by WCAG 2.2 guidance on keyboard access,
 
 ## Running the Prototype
 
-Serve the `demo` directory as the website root so the game’s page links resolve correctly. From the project folder, run:
+Serve the `docs` directory as the website root so the game’s page links resolve correctly. From the project folder, run:
 
 ```powershell
-cd demo
+cd docs
 python -m http.server 8000
 ```
 
@@ -323,12 +324,13 @@ The earlier flashing animation inserted underscores into input values, which cou
 
 The original code did not have a function to test if the guess word was present in the master word list this meant users could guess "appln" and it be treated as a valid guess, this now produces an error as a function checks if guess is present in list wordlist.
 
+### Incorrect Size png in Access Mode
+- [Earlier no-colour layout](README_IMG/SCREENSHOT-ERROR-NO-COLOUR-UGLY.png)
 
+The first iteration of Access Mode used boxes of size 16px by 16px this lead to an awful overlapping visual glitch instead on canva setting a box to the fixed dimension of the page fixed the issue. 
 ### Other recorded errors
 
 - [Formatting issue](README_IMG/SCREENSHOT-ERROR-INC-FORMATTING.png)
-
-- [Earlier no-colour layout](README_IMG/SCREENSHOT-ERROR-NO-COLOUR-UGLY.png)
 - [Syntax or iteration issue](README_IMG/SCREENSHOT-ERROR-SYN-NO-ITERATION.png)
 
 ## Development Constraints
