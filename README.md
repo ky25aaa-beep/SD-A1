@@ -69,6 +69,39 @@ This is a hypothetical persona to guide design. These needs describe the intende
 
 This is also a hypothetical persona and should be treated as a design aid rather than a report of research with a real participant.
 
+## User Requirements
+
+- **UR1:** A blind player using a screen reader must be able to play the game using a keyboard, without needing a mouse.
+- **UR2:** The player must be able to identify the current guess row and the position of each letter input.
+- **UR3:** The player must be able to enter and submit a five-letter guess.
+- **UR4:** After a valid guess, the player must be able to find out which letters are correct and in the correct position, present in the word but in another position, or absent from the word. This information must be available without relying on colour or images alone.
+- **UR5:** The player must receive clear feedback if a guess is incomplete or invalid, and must be told when the game is won or lost and how many attempts remain.
+- **UR6:** A player must be able to understand the rules quickly, receive feedback after a guess, and start a new game after finishing.
+
+## System Requirements
+
+### Functional requirements
+
+- **FR1:** The game must present six guess rows, with five letter inputs in each row.
+- **FR2:** The game must select a five-letter answer from its word list and accept guesses only in the active row.
+- **FR3:** The game must require a complete five-letter guess and check that the guess is in the valid word list before evaluating it.
+- **FR4:** The game must evaluate each letter as correct and in the correct position, present in the answer in another position, or absent from the answer. The evaluation must handle repeated letters consistently.
+- **FR5:** After a valid guess, the game must show the result for each letter and advance to the next row when the answer has not been found.
+- **FR6:** The game must end when the player finds the answer or uses all six guesses, and must communicate the outcome.
+- **FR7:** The game must provide a way to start a new game.
+- **FR8:** Guess results, validation messages, remaining attempts, and win/loss messages must be available to screen-reader users as text.
+
+### Non-functional requirements
+
+- **NFR1:** All game actions must be operable by keyboard, with a visible and predictable focus position.
+- **NFR2:** Inputs and game status must have meaningful accessible names and text descriptions so screen-reader users can understand the game state.
+- **NFR3:** Visual feedback must use text or distinguishable symbols as well as colour; colour or decorative images alone must not convey a result.
+- **NFR4:** Instructions, feedback, and error messages must use clear and consistent language.
+- **NFR5:** The browser-based game must use HTML5, CSS, and JavaScript and remain within the scope of one five-letter game.
+- **NFR6:** If the word list cannot be loaded, the game must explain the problem and give the player a clear next step.
+
+These are the intended requirements. Their implementation and accessibility still need to be checked and recorded during testing.
+
 ## Development Constraints
 
 - **Initial plan (21 October 2026):** develop five-, six-, and seven-letter game versions.
@@ -76,5 +109,3 @@ This is also a hypothetical persona and should be treated as a design aid rather
 - **Time:** the assignment estimates about 36 hours of work and has a submission date in the week commencing 26 October 2026.
 - **Platform and technologies:** the application must be browser-based and use HTML5, CSS, and JavaScript. Other technologies require tutor approval.
 - **Project requirements:** the work must be managed in a Git-based repository, include a deployed application, and implement at least one feature beyond the core game.
-
-## System
