@@ -1,9 +1,11 @@
+# Project Overview
+
+This project is a browser-based five-letter word guessing game. The player has up to six attempts to identify a hidden word, using feedback from each guess to make the next one. The intended purpose is to offer students and other puzzle players a short activity that exercises vocabulary, deduction, and problem-solving. The project began with a plan for five-, six-, and seven-letter modes, then narrowed to one five-letter game with accessibility for blind players as a design goal. Keyboard and screen-reader access are requirements to achieve and verify, not claims about the current implementation. The critical evaluation is in [evaluation.md](evaluation.md).
+
 # Primary Target Audience
 
-Current Research into wordle suggests its a formative resource and format within learning. According to  Ritchey, Katherine in Wordle as a Teaching Tool (CITE), She has used wordle as a basis for 4 games she uses to help students advance their skills and knowledge in particular concepts. In addition Linkedin, The Professional networking platform
-launched its eighth puzzle game in 2026, The game called Wend challenges players to find hidden words within a letter grid where each letter is used only once (CITE)
+Ritchey et al. (2023) present four Wordle-based activities designed to help students develop mathematical concepts including combinatorics, probability, and strategy. LinkedIn launched Wend as its eighth game on 9 June 2026; it asks players to find hidden words by connecting letters in a grid, with each letter used once (Smith, 2026). These examples informed the choice to use a short word puzzle to engage vocabulary, deduction, and analytical thinking. The project targets students and academics interested in this kind of challenge, while prioritising access for blind players who use screen readers.
 
-Based on this research the target audience for my game are students/academics looking to further their problem solving and analytical skills 
 # Initial Game Idea
 
 Wordle
@@ -69,6 +71,8 @@ This is a hypothetical persona to guide design. These needs describe the intende
 
 This is also a hypothetical persona and should be treated as a design aid rather than a report of research with a real participant.
 
+Accessibility requirements are informed by WCAG 2.2 guidance on keyboard access, input labels, use of colour, and status messages (W3C, 2024).
+
 ## User Requirements
 
 - **UR1:** A blind player using a screen reader must be able to play the game using a keyboard, without needing a mouse.
@@ -102,6 +106,151 @@ This is also a hypothetical persona and should be treated as a design aid rather
 
 These are the intended requirements. Their implementation and accessibility still need to be checked and recorded during testing.
 
+## Running the Prototype
+
+Serve the `demo` directory as the website root so the game’s page links resolve correctly. From the project folder, run:
+
+```powershell
+cd demo
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/` in a browser. The word list and jQuery are loaded from external URLs, so an internet connection is required for a first-time run.
+
+## Current Implementation Choices and Trade-offs
+
+These notes describe choices visible in the current five-letter game source. They are not evidence that the accessibility requirements have already been met.
+
+- The page uses six rows of five single-character HTML inputs. The game script now assigns each input a row-and-position name and disables inactive rows; keyboard and screen-reader use still needs hands-on testing.
+- The page interaction is in `5-letter.js`, while `api/5-letter.js` handles word-list loading and guess evaluation. Keeping these responsibilities in separate files makes the roles easier to locate, though they share data through browser storage and global functions.
+- The word list is fetched from the `darkermango/5-Letter-words` JSON endpoint and cached in `localStorage`. This avoids bundling the full list with the page, but a first-time player needs a network connection and the loading failure needs clear on-page feedback. The page also loads jQuery 3.6.0 from a CDN for input focus and message handling, creating another network dependency.
+- The five-letter page uses colour classes for visual results. The game script now also stores each letter position status, adds it to the input accessible name, and announces guess feedback through a live status region. This still needs hands-on screen-reader testing.
+- A reset control clears stored game values and reloads the page. The test plan includes checking that it starts a genuinely fresh game.
+
+## Technical Problem: Repeated-Letter Feedback
+
+During source review, repeated letters could be displayed with the wrong status. The evaluator calculated a status for each position, but the display layer relied on lists of letter values. If a guess contained the same letter more times than the answer, each occurrence could inherit the same “present elsewhere” style.
+
+Two approaches were considered: calculate the position statuses again in the display layer, or save the evaluator’s five per-position statuses and let the display use those results. The second approach was selected so visual feedback and screen-reader feedback use the same result for each box. The evaluator now stores a five-item status array, and the page applies that status to each corresponding input.
+
+An algorithm check using answer `apple` and guess `allee` returned `known, unknown, absent, absent, known`, correctly treating the extra `l` as absent. This check and JavaScript syntax checks passed. The full game display, keyboard interaction, and screen-reader announcement still need end-to-end retesting.
+### Browser check: input placeholder animation
+
+A browser interaction check found that the previous flashing effect wrote underscore characters into empty input values. This could make an incomplete row appear complete to the guess-length check and expose placeholder characters as entered text. The effect was removed so the inputs remain empty until the player types. After the change, submitting a partially filled row produced the “Missing letters” message, and a complete valid guess advanced normally.
+## Additional Feature: Blind-Friendly Interaction
+
+The project extends the core guessing game with a blind-friendly interaction design. Letter inputs receive row-and-position names, guess results are described in text, and a live status region announces feedback and remaining attempts. Keyboard submission and visible focus styling are also included. This is intended as the project’s additional feature beyond the basic word-guessing loop. The live page’s accessibility tree exposes the input names and disabled state of inactive rows, but keyboard-only and screen-reader completion tests are still required before claiming the feature is fully verified.
+## Design Evidence
+
+### Proposed interface sketch
+
+```text
+Five-Letter Word Game
+Instructions: Enter one letter in each box. Press Enter to submit a complete guess.
+Status: Guess 1 of 6. [Screen-reader announcement area]
+
+Guess 1: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+Guess 2: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+Guess 3: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+Guess 4: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+Guess 5: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+Guess 6: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
+
+Feedback: Each letter's result is available as text and a visual cue.
+[Start a new game]
+```
+
+This is a low-fidelity proposal. The final interface should be compared with it and updated to match the implemented, tested game.
+
+### Pseudocode for a guess
+
+```text
+START a new game
+Load the valid five-letter word list
+IF the word list cannot be loaded
+    explain the problem to the player
+    stop until the list is available
+SELECT a hidden answer
+SET the current attempt to 1
+
+WHILE the game is active
+    let the player enter a guess in the current row
+    IF the guess has fewer than five letters
+        announce that all five letters are required
+        keep the current row active
+    ELSE IF the guess is not in the valid word list
+        announce that the word is invalid
+        keep the current row active
+    ELSE
+        mark exact letter-and-position matches first
+        compare remaining letters with the remaining answer letters
+        report each letter as correct, present elsewhere, or absent
+        announce the feedback and attempts remaining
+        IF every letter is correct
+            announce a win
+            end the game
+        ELSE IF the current attempt is the sixth
+            announce a loss and reveal the answer
+            end the game
+        ELSE
+            move to the next row
+            increase the attempt number
+        END IF
+    END IF
+END WHILE
+
+WHEN the player starts a new game
+    clear the previous guesses and feedback
+    select a new hidden answer
+    return to the first row
+```
+
+### Game flow
+
+```mermaid
+flowchart TD
+    A[Start or reset game] --> B[Load word list]
+    B --> C{Word list available?}
+    C -- No --> D[Explain the problem]
+    D --> B
+    C -- Yes --> E[Select hidden five-letter answer]
+    E --> F[Enter guess in active row]
+    F --> G{Five letters entered?}
+    G -- No --> H[Announce incomplete guess]
+    H --> F
+    G -- Yes --> I{Guess is valid?}
+    I -- No --> J[Announce invalid word]
+    J --> F
+    I -- Yes --> K[Evaluate letters and announce feedback]
+    K --> L{Answer found?}
+    L -- Yes --> M[Announce win]
+    L -- No --> N{Six guesses used?}
+    N -- Yes --> O[Announce loss and reveal answer]
+    N -- No --> P[Advance to next row]
+    P --> F
+    M --> Q{Start another game?}
+    O --> Q
+    Q -- Yes --> A
+    Q -- No --> R[End]
+```
+
+## Test Plan
+
+The cases below come from the requirements. T0–T6 and T9 have been checked using syntax checks, an isolated algorithm check, and browser interaction checks. The browser checks do not replace a manual keyboard-only or screen-reader test. T7 and T8 are still planned. Record actual results, pass/fail status, and any fixes and retests after testing.
+
+| ID | Feature or scenario | Expected result | Actual result / status |
+|---|---|---|---|
+| T0 | JavaScript syntax | Both changed JavaScript files parse without syntax errors. | PASS: `node --check` for `5-letter.js` and `api/5-letter.js`. |
+| T1 | Enter a complete valid five-letter guess | The game evaluates all five positions, announces the result, and advances when the answer is not found. | PASS: browser interaction check with `crane`; the page announced five position results, said 5 guesses remained, and enabled Guess 2. |
+| T2 | Submit fewer than five letters | The game explains that the guess is incomplete and keeps the current row active. | PASS: browser interaction check with one letter entered; the page announced “Missing letters” and returned focus to the current row. |
+| T3 | Submit a five-letter string absent from the valid word list | The game identifies the guess as invalid and does not consume an attempt. | PASS: browser interaction check with `xxxxx`; the page announced “Invalid word,” cleared the row, and kept Guess 2 active. |
+| T4 | Guess `allee` when the answer is `apple` | Exact matches are handled first; the extra `l` is absent after the answer's only `l` has been matched. | PASS, algorithm check: `known, unknown, absent, absent, known`. |
+| T5 | Guess the hidden answer | The game announces a win and prevents further guesses in that game. | PASS: browser interaction check; after `crane`, submitting the revealed test answer `ethos` announced “You win” and disabled the rows. |
+| T6 | Use six valid guesses without finding the answer | The game announces a loss, reveals the answer, and prevents another guess in that game. | PASS: browser interaction check with `crane`, `slate`, `brook`, `plant`, `brick`, and `flame`; after guess six the game announced “Game Over” and revealed the answer. |
+| T7 | Play using only a keyboard and screen reader | Inputs, focus, instructions, feedback, remaining attempts, and end-game messages are understandable without relying on colour or images alone. | Not run |
+| T8 | Make the word list unavailable | The game explains that the list could not be loaded and gives a clear next step without starting an unusable game. | Not run |
+| T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS: after winning, Reset Game cleared the board and returned to Guess 1. |
+
 ## Development Constraints
 
 - **Initial plan (21 October 2026):** develop five-, six-, and seven-letter game versions.
@@ -109,3 +258,15 @@ These are the intended requirements. Their implementation and accessibility stil
 - **Time:** the assignment estimates about 36 hours of work and has a submission date in the week commencing 26 October 2026.
 - **Platform and technologies:** the application must be browser-based and use HTML5, CSS, and JavaScript. Other technologies require tutor approval.
 - **Project requirements:** the work must be managed in a Git-based repository, include a deployed application, and implement at least one feature beyond the core game.
+
+## References and Credits
+
+- darkermango (n.d.) *5-Letter-Words*. GitHub. Available at: https://github.com/darkermango/5-Letter-words (Accessed: 26 October 2026).
+- OpenJS Foundation (n.d.) *jQuery Core 3.6.0*. Available at: https://code.jquery.com/jquery-3.6.0.min.js (Accessed: 26 October 2026).
+- Ritchey, K., Patterson, S., Patterson, B. and Ritchey, N. (2023) ‘Wordle as a Teaching Tool’, *PRIMUS*, 33(8), pp. 901–915. doi: https://doi.org/10.1080/10511970.2023.2193951.
+- Smith, H. (2026) ‘Introducing Wend: our eighth LinkedIn game’, *LinkedIn*, 9 June. Available at: https://www.linkedin.com/pulse/introducing-wend-our-eighth-linkedin-game-helen-smith-bpxec (Accessed: 26 October 2026).
+- W3C (2024) *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation, 12 December. Available at: https://www.w3.org/TR/WCAG22/ (Accessed: 26 October 2026).
+
+
+
+
