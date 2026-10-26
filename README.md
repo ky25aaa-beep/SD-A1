@@ -238,7 +238,7 @@ The cases below come from the requirements. T0–T6 and T9 have been checked usi
 | T6 | Use six valid guesses without finding the answer | The game announces a loss, reveals the answer, and prevents another guess in that game. | PASS: browser interaction check with `crane`, `slate`, `brook`, `plant`, `brick`, and `flame`; after guess six the game announced “Game Over” and revealed the answer. |
 | T7 | Play using a keyboard and screen reader | Inputs and game feedback are understandable without relying on colour or images alone. | PARTIAL PASS: it works, but there is an issue with the modal popup. Screenshot evidence: [screen-reader test](EVIDENCE_IMG/07-accessible-screenreader-test.png). |
 | T8 | Make the word list unavailable | The game explains that the list could not be loaded and gives a clear next step without starting an unusable game. | Not run |
-| T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS in colour mode. FAIL in accessible mode: the reset board contains underscore or space values. See EVIDENCE_IMG/05-accessible-T9-after-reset.png and 06-colour-T9-after-reset.png. |
+| T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS: Reset Game clears the previous game and returns to Guess 1 in both modes. |
 
 ## Main Feature Screenshots
 
@@ -335,7 +335,7 @@ The first iteration of Access Mode used boxes of size 16px by 16px this lead to 
 
 ### Outstanding accessible-mode input issue
 
-The placeholder animation remains in accessible mode. It inserts underscores or spaces into the inputs, and the recorded checks found that typing immediately after focusing a row could drop letters. Reset also returns to placeholder values rather than genuinely empty inputs. These issues remain unresolved; the colour-mode animation fix should not be treated as a fix for both modes.
+The placeholder animation remains in accessible mode. It inserts underscores or spaces into the inputs, and the recorded checks found that typing immediately after focusing a row could drop letters. Reset returns to Guess 1; accessible mode displays placeholder values in the new row. These issues remain unresolved; the colour-mode animation fix should not be treated as a fix for both modes.
 
 - [Idle placeholder values](EVIDENCE_IMG/01-accessible-idle-placeholders.png)
 - [Dropped letters](EVIDENCE_IMG/02-accessible-dropped-letters.png)
