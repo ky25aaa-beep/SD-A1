@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Wordle Help Guide</title>
+<style>
+    body {
+        display: block;
+        margin: 0;
+        padding: 32px 24px;
+        background: #15161b;
+        color: #eeeeee;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        text-align: left;
+    }
+
+    main {
+        max-width: 850px;
+        margin: 0;
+    }
+
+    h1, h2, p, ul, li {
+        text-align: left;
+    }
+
+    h1 {
+        margin: 0 0 24px;
+        font-size: 30px;
+    }
+
+    h2 {
+        margin: 28px 0 10px;
+        font-size: 22px;
+    }
+
+    p {
+        margin: 0 0 16px;
+    }
+
+    ul {
+        display: block;
+        padding-left: 24px;
+        margin: 0 0 16px;
+        list-style: disc;
+    }
+
+    li {
+        display: list-item;
+        margin-bottom: 8px;
+    }
+
+    .board {
+        width: fit-content;
+        margin: 0 0 24px;
+    }
+
+    .board a {
+        text-decoration: none;
+    }
+</style>
+</head>
+
+<body>
+    <div class="board">
+        <a href="index.html" class="row hover-to-green" aria-label="Return to homepage">
+            <span class="character unknown">H</span>
+            <span class="character unknown">O</span>
+            <span class="character unknown">M</span>
+            <span class="character unknown">E</span>
+        </a>
+    </div>
+
+    <main>
+        <h1>Wordle Help Guide</h1>
+        <p>
+            The game selects a hidden five-letter word. You have six guesses to
+            find it. Enter one letter in each box to form a valid five-letter
+            word. After each guess, use the feedback to help choose your next word.
+        </p>
+
+        <h2>Colour Mode</h2>
+        <ul>
+            <li><strong>Green:</strong> The letter is in the correct position.</li>
+            <li><strong>Amber:</strong> The letter is in the answer, but in a different position.</li>
+            <li><strong>Dark grey:</strong> This occurrence of the letter does not match a remaining letter in the answer.</li>
+        </ul>
+        <p>
+            Letters can appear more than once. If your guess contains more copies
+            of a letter than the answer, the extra copies are marked absent.
+        </p>
+
+        <h2>Colour vs Access Differences</h2>
+        <p>
+            Both modes use the same five-letter guessing rules. Colour mode
+            displays coloured letter feedback. Access mode uses symbols and a
+            written feedback panel so the clues can be understood without
+            relying on colour.
+        </p>
+        <ul>
+            <li><strong>Tick:</strong> The letter is in the correct position.</li>
+            <li><strong>Question mark:</strong> The letter is in the answer, but in a different position.</li>
+            <li><strong>Cross:</strong> This occurrence of the letter is marked absent.</li>
+        </ul>
+        <p>
+            The Access mode feedback panel describes the latest guess and lists
+            the letter positions confirmed so far.
+        </p>
+
+        <h2>Auto Answer (Speed Play/Tab Answer)</h2>
+        <p>
+            Typing a letter automatically moves focus to the next box. Once all
+            five boxes are filled, leaving the final box submits your guess.
+            This can happen automatically after typing the fifth letter, or when
+            you press Tab or click away from the final box.
+        </p>
+
+        <h2>Invalid Guesses</h2>
+        <p>
+            Your guess must contain five letters and appear in the game's word
+            list. An invalid word produces an error message without using an
+            attempt. Close the message and enter another word.
+        </p>
+
+        <h2>Winning, Losing and Restarting</h2>
+        <p>
+            Find the hidden word within six guesses to win. If all six guesses
+            are incorrect, the game ends and reveals the answer. Select
+            <strong>Reset Game</strong> to clear the board and start a new round.
+        </p>
+    </main>
+</body>
+
+</html>
