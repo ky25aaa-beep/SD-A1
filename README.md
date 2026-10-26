@@ -1,6 +1,6 @@
 # Project Overview
 
-This project is a browser-based five-letter word guessing game. The player has up to six attempts to identify a hidden word, using feedback from each guess to make the next one. The intended purpose is to offer students and other puzzle players a short activity that exercises vocabulary, deduction, and problem-solving. The project began with a plan for five-, six-, and seven-letter modes, then narrowed to one five-letter game with accessibility for blind players as a design goal. Keyboard and screen-reader access are requirements to achieve and verify, not claims about the current implementation. The critical evaluation is in [evaluation.md](evaluation.md).
+This project is a browser-based five-letter word guessing game. The player has up to six attempts to identify a hidden word, using feedback from each guess to make the next one. The intended purpose is to offer students and other puzzle players a short activity that exercises vocabulary, deduction, and problem-solving. The project began with a plan for five-, six-, and seven-letter modes, then narrowed to one five-letter game with accessibility for blind players as a design goal. The critical evaluation is in [evaluation.md](evaluation.md).
 
 # Primary Target Audience
 
@@ -8,16 +8,14 @@ Ritchey et al. (2023) present four Wordle-based activities designed to help stud
 
 # Initial Game Idea
 
-Wordle
-
-**Wordle** 
+A five-letter Wordle-style guessing game.
 # Initial Game, User, and System Requirements 
 ## Game Requirements 
 
 **UI - User Interface**
 
 Provide a colourised user interface consisting of 
-6 rows containing five input boxes per row each initally a light grey colour
+6 rows containing five input boxes per row each initially a light grey colour
 
 **Function - Program Behaviour**
 
@@ -28,7 +26,7 @@ On word submission colourise the current row to match the states:
 1. Letters in the guess that are not in the word should be dark grey 
 2. Letters in the guess that are present in the word but in the incorrect position should be amber 
 3. Letters present in the guess that are in the correct position should be green
-4. The game after colourising should progress to the next  line
+4. The game after colourising should progress to the next line
 5. The game should limit guesses to a total of six 
 6. The game should limit guesses to only valid words
 
@@ -51,8 +49,6 @@ On word submission colourise the current row to match the states:
 - The game should announce guess results, validation errors, and the end of the game to the screen reader.
 - Keyboard focus should follow the game flow and remain easy to control.
 
-This is a hypothetical persona to guide design. These needs describe the intended accessibility direction and do not by themselves confirm that every feature is implemented or tested.
-
 ### Persona 2: student who enjoys word puzzles
 
 **Name:** Jordan (fictional persona)
@@ -68,8 +64,6 @@ This is a hypothetical persona to guide design. These needs describe the intende
 - Simple instructions and a clear, consistent game layout.
 - Immediate feedback after each valid guess.
 - A way to start a new game after finishing.
-
-This is also a hypothetical persona and should be treated as a design aid rather than a report of research with a real participant.
 
 Accessibility requirements are informed by WCAG 2.2 guidance on keyboard access, input labels, use of colour, and status messages (W3C, 2024).
 
@@ -104,8 +98,6 @@ Accessibility requirements are informed by WCAG 2.2 guidance on keyboard access,
 - **NFR5:** The browser-based game must use HTML5, CSS, and JavaScript and remain within the scope of one five-letter game.
 - **NFR6:** If the word list cannot be loaded, the game must explain the problem and give the player a clear next step.
 
-These are the intended requirements. Their implementation and accessibility still need to be checked and recorded during testing.
-
 ## Running the Prototype
 
 Serve the `demo` directory as the website root so the game’s page links resolve correctly. From the project folder, run:
@@ -119,12 +111,10 @@ Then open `http://localhost:8000/` in a browser. The word list and jQuery are lo
 
 ## Current Implementation Choices and Trade-offs
 
-These notes describe choices visible in the current five-letter game source. They are not evidence that the accessibility requirements have already been met.
-
-- The page uses six rows of five single-character HTML inputs. The game script now assigns each input a row-and-position name and disables inactive rows; keyboard and screen-reader use still needs hands-on testing.
+- The page uses six rows of five single-character HTML inputs. The game script now assigns each input a row-and-position name and disables inactive rows.
 - The page interaction is in `5-letter.js`, while `api/5-letter.js` handles word-list loading and guess evaluation. Keeping these responsibilities in separate files makes the roles easier to locate, though they share data through browser storage and global functions.
 - The word list is fetched from the `darkermango/5-Letter-words` JSON endpoint and cached in `localStorage`. This avoids bundling the full list with the page, but a first-time player needs a network connection and the loading failure needs clear on-page feedback. The page also loads jQuery 3.6.0 from a CDN for input focus and message handling, creating another network dependency.
-- The five-letter page uses colour classes for visual results. The game script now also stores each letter position status, adds it to the input accessible name, and announces guess feedback through a live status region. This still needs hands-on screen-reader testing.
+- The five-letter page uses colour classes for visual results. The game script now also stores each letter position status, adds it to the input accessible name, and announces guess feedback through a live status region.
 - A reset control clears stored game values and reloads the page. The test plan includes checking that it starts a genuinely fresh game.
 
 ## Technical Problem: Repeated-Letter Feedback
@@ -133,13 +123,13 @@ During source review, repeated letters could be displayed with the wrong status.
 
 Two approaches were considered: calculate the position statuses again in the display layer, or save the evaluator’s five per-position statuses and let the display use those results. The second approach was selected so visual feedback and screen-reader feedback use the same result for each box. The evaluator now stores a five-item status array, and the page applies that status to each corresponding input.
 
-An algorithm check using answer `apple` and guess `allee` returned `known, unknown, absent, absent, known`, correctly treating the extra `l` as absent. This check and JavaScript syntax checks passed. The full game display, keyboard interaction, and screen-reader announcement still need end-to-end retesting.
+An algorithm check using answer `apple` and guess `allee` returned `known, unknown, absent, absent, known`, correctly treating the extra `l` as absent. This check and JavaScript syntax checks passed.
 ### Browser check: input placeholder animation
 
 A browser interaction check found that the previous flashing effect wrote underscore characters into empty input values. This could make an incomplete row appear complete to the guess-length check and expose placeholder characters as entered text. The effect was removed so the inputs remain empty until the player types. After the change, submitting a partially filled row produced the “Missing letters” message, and a complete valid guess advanced normally.
 ## Additional Feature: Blind-Friendly Interaction
 
-The project extends the core guessing game with a blind-friendly interaction design. Letter inputs receive row-and-position names, guess results are described in text, and a live status region announces feedback and remaining attempts. Keyboard submission and visible focus styling are also included. This is intended as the project’s additional feature beyond the basic word-guessing loop. The live page’s accessibility tree exposes the input names and disabled state of inactive rows, but keyboard-only and screen-reader completion tests are still required before claiming the feature is fully verified.
+The project extends the core guessing game with a blind-friendly interaction design. Letter inputs receive row-and-position names, guess results are described in text, and a live status region announces feedback and remaining attempts. Keyboard submission and visible focus styling are also included. This is intended as the project’s additional feature beyond the basic word-guessing loop.
 ## Design Evidence
 
 ### Proposed interface sketch
@@ -159,8 +149,6 @@ Guess 6: [ _ ] [ _ ] [ _ ] [ _ ] [ _ ]
 Feedback: Each letter's result is available as text and a visual cue.
 [Start a new game]
 ```
-
-This is a low-fidelity proposal. The final interface should be compared with it and updated to match the implemented, tested game.
 
 ### Pseudocode for a guess
 
@@ -236,7 +224,7 @@ flowchart TD
 
 ## Test Plan
 
-The cases below come from the requirements. T0–T6 and T9 have been checked using syntax checks, an isolated algorithm check, and browser interaction checks. The browser checks do not replace a manual keyboard-only or screen-reader test. T7 and T8 are still planned. Record actual results, pass/fail status, and any fixes and retests after testing.
+The cases below come from the requirements. T0–T6 and T9 have been checked using syntax checks, an isolated algorithm check, and browser interaction checks. T7 and T8 are still planned.
 
 | ID | Feature or scenario | Expected result | Actual result / status |
 |---|---|---|---|
@@ -250,6 +238,98 @@ The cases below come from the requirements. T0–T6 and T9 have been checked usi
 | T7 | Play using only a keyboard and screen reader | Inputs, focus, instructions, feedback, remaining attempts, and end-game messages are understandable without relying on colour or images alone. | Not run |
 | T8 | Make the word list unavailable | The game explains that the list could not be loaded and gives a clear next step without starting an unusable game. | Not run |
 | T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS: after winning, Reset Game cleared the board and returned to Guess 1. |
+
+## Main Feature Screenshots
+
+The following screenshots show real application states. The answer was inspected through Chrome's developer tools for the winning games, then entered through the normal game controls. Source code and game results were not modified. Screenshots document visible behaviour; they do not establish what a screen reader announced.
+
+### Homepage
+
+![Homepage with colour and accessible mode links](README_IMG/TESTING/homepage.png)
+
+The homepage provides access to both game modes.
+
+### Colour mode
+
+![Colour mode before guessing](README_IMG/TESTING/colour-mode.png)
+
+The board contains six rows of five inputs, with only the first row available for entry (FR1–FR2).
+
+![Colour mode showing valid guess feedback](README_IMG/TESTING/colour-guess.png)
+
+The guess `would`, against answer `dogma`, shows green for O in the correct position, amber for D in another position, and grey for absent letters (FR4–FR5).
+
+![Colour mode winning message](README_IMG/TESTING/colour-win.png)
+
+Entering `dogma` produces the winning message (FR6).
+
+![Colour mode after six unsuccessful guesses](README_IMG/TESTING/colour-loss.png)
+
+Six valid incorrect guesses complete the game. The result popup was dismissed to show all six rows and their feedback (FR6).
+
+![Colour mode invalid word message](README_IMG/TESTING/colour-invalid.png)
+
+Submitting `zzzzz` produces an invalid-word message and keeps the current attempt available (FR3).
+
+### Accessible mode
+
+![Accessible mode before guessing](README_IMG/TESTING/access-mode.png)
+
+The interface includes a symbol key and a written feedback panel alongside the six-row board.
+
+![Accessible mode guess feedback](README_IMG/TESTING/access-guess.png)
+
+Symbols distinguish letter results, while the feedback panel describes correct positions, misplaced letters and absent letters (UR4).
+
+![Accessible mode winning message](README_IMG/TESTING/access-win.png)
+
+The feedback panel confirms the win in three guesses and identifies the winning word, TAXED (FR6).
+
+![Accessible mode after six unsuccessful guesses](README_IMG/TESTING/access-loss.png)
+
+All six incorrect guesses and the final written guess feedback remain visible after the Game Over popup is dismissed (FR6).
+
+![Accessible mode invalid word message](README_IMG/TESTING/access-invalid.png)
+
+An invalid five-letter word produces an error message without advancing to the next attempt (FR3).
+
+## Testing Results for Both Modes
+
+These browser interaction checks supplement the test plan above. The loss rounds used `which`, `there`, `about`, `would`, `other` and `could`.
+
+| Test | Expected result | Colour mode actual result | Accessible mode actual result | Result |
+|---|---|---|---|---|
+| Initial board | Six rows of five inputs; first row active | Initial board displayed | Initial board, symbol key and feedback panel displayed | PASS |
+| Valid guess | Evaluate the guess and advance | `would` showed green, amber and grey feedback | `there` showed symbols and written positional feedback | PASS |
+| Invalid word | Reject the word without using an attempt | `zzzzz` produced Invalid word | `zzzzz` produced Invalid word | PASS |
+| Win | Recognise the correct answer and end the game | `dogma` produced You win | `taxed` produced You won and the winning word | PASS |
+| Six incorrect guesses | End the game and reveal the answer | Game Over revealed `taxed`; six completed rows remained visible | Game Over revealed `pails`; six completed rows remained visible | PASS |
+| Reset | Clear the previous round and return to the first row | Reset returned to an empty board | Reset cleared the board and feedback panel | PASS |
+
+## Errors, Fixes and Retesting
+
+### Repeated-letter feedback
+
+![Earlier incorrect letter-position feedback](README_IMG/SCREENSHOT-ERROR-FOUND_LETTER_WRONG_PLACE.png)
+
+The earlier display could assign the same feedback to repeated occurrences of a letter. The fix stores and applies a separate status for each position, as explained in the technical problem section. The `apple` / `allee` algorithm retest returned `known, unknown, absent, absent, known`, so the extra L was marked absent.
+
+### Input placeholder animation
+
+The earlier flashing animation inserted underscores into input values, which could interfere with incomplete-guess validation. In colour mode, removing this effect left inputs empty until entry. A partially filled row then produced Missing letters, while a complete valid guess advanced normally. This fix is described in the browser check above and does not establish that the same animation was removed from accessible mode.
+
+### Invalid Word Accepted as Guess
+- [Invalid-word issue](README_IMG/SCREENSHOT-ERROR-INVWRD.png)
+
+The original code did not have a function to test if the guess word was present in the master word list this meant users could guess "appln" and it be treated as a valid guess, this now produces an error as a function checks if guess is present in list wordlist.
+
+
+### Other recorded errors
+
+- [Formatting issue](README_IMG/SCREENSHOT-ERROR-INC-FORMATTING.png)
+
+- [Earlier no-colour layout](README_IMG/SCREENSHOT-ERROR-NO-COLOUR-UGLY.png)
+- [Syntax or iteration issue](README_IMG/SCREENSHOT-ERROR-SYN-NO-ITERATION.png)
 
 ## Development Constraints
 
@@ -266,7 +346,3 @@ The cases below come from the requirements. T0–T6 and T9 have been checked usi
 - Ritchey, K., Patterson, S., Patterson, B. and Ritchey, N. (2023) ‘Wordle as a Teaching Tool’, *PRIMUS*, 33(8), pp. 901–915. doi: https://doi.org/10.1080/10511970.2023.2193951.
 - Smith, H. (2026) ‘Introducing Wend: our eighth LinkedIn game’, *LinkedIn*, 9 June. Available at: https://www.linkedin.com/pulse/introducing-wend-our-eighth-linkedin-game-helen-smith-bpxec (Accessed: 26 October 2026).
 - W3C (2024) *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation, 12 December. Available at: https://www.w3.org/TR/WCAG22/ (Accessed: 26 October 2026).
-
-
-
-
