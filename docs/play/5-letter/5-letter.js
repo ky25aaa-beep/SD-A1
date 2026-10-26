@@ -197,6 +197,16 @@ function attachGuessSubmitHandler() {
         }
         if (ConvertRowtoGuess()) Format_Result_and_display();
     });
+
+    lastInput.addEventListener("blur", function () {
+        if (inputs.every(input => input.value !== "")) {
+            const guessSubmitted = ConvertRowtoGuess();
+            if (guessSubmitted) {
+                Format_Result_and_display();
+            }
+        }
+    });
+
 }
 
 function display_message(title, content) {
