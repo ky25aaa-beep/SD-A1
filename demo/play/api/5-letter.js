@@ -109,21 +109,47 @@ function GET_guess_result(guess) {
     var result_unknown_positions = [];
     var known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
 
+    // Count how many times each letter appears in the secret word
+    var secret_letter_counts = {};
+    for (let i = 0; i < random_word.length; i++) {
+        let char = random_word.charAt(i);
+        secret_letter_counts[char] = (secret_letter_counts[char] || 0) + 1;
+    }
+
+    // Array to temporarily keep track of statuses for this exact guess row
+    var guess_statuses = new Array(5).fill("absent");
+
+    // PASS 1: Identify all perfect Green matches first and consume their counts
     for (let i = 0; i < normalized_guess.length; i++) {
-        var letter = normalized_guess.charAt(i);
-        if (!random_word.includes(letter)) {
-            if (!known_unused_letters.includes(letter)) {
-                known_unused_letters.push(letter);
-            }
-        } else if (random_word.includes(letter)) {
+        let letter = normalized_guess.charAt(i);
+        if (letter === random_word.charAt(i)) {
+            result_known_positions[i] = letter;
+            guess_statuses[i] = "known";
+            secret_letter_counts[letter]--; // Subtract from available pool
+        }
+    }
+
+    // PASS 2: Identify Yellow matches from the remaining available pool
+    for (let i = 0; i < normalized_guess.length; i++) {
+        // Skip if this spot was already solved as Green
+        if (guess_statuses[i] === "known") continue;
+
+        let letter = normalized_guess.charAt(i);
+
+        // If the letter is in the secret word pool and has remaining instances left
+        if (secret_letter_counts[letter] && secret_letter_counts[letter] > 0) {
+            guess_statuses[i] = "unknown";
+            // Store the letter in our list of misplaced letters if not already present
             if (!result_unknown_positions.includes(letter)) {
                 result_unknown_positions.push(letter);
             }
-        }
-
-        if (letter === random_word.charAt(i)) {
-            result_known_positions[i] = letter;
-            result_unknown_positions = result_unknown_positions.filter(item => item !== letter);
+            secret_letter_counts[letter]--; // Subtract from pool
+        } else {
+            // Letter is either not in the word at all, or its count has run out
+            guess_statuses[i] = "absent";
+            if (!known_unused_letters.includes(letter)) {
+                known_unused_letters.push(letter);
+            }
         }
     }
 
@@ -131,7 +157,6 @@ function GET_guess_result(guess) {
     localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
     localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
 }
-
 /* function to reset the game if reset-button is pressed (reset session storage and reload the page) */
 function resetGame() {
     localStorage.removeItem("random_word");

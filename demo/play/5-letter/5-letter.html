@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Wordle Game</title>
+    <script src="5-letter.js" defer></script>
+    <script src="../api/5-letter.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<body>
+    <div id="message-container" class="message-container-hidden">
+        <h1 id="message-title"></h1>
+        <p id="message-content"></p>
+        <span id="message-close" class="message-close" role="button" tabindex="0">Close</span>
+    </div>
+        
+    <h1 class="characters" aria-label="Wordle">
+        <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
+    </h1>
+    <!-- Guess Rows -->
+    <div class="board">
+        <div class="row" guess_number="1" role="link" tabindex="0" id="row-1">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+        <div class="row" guess_number="2" role="link" tabindex="0" id="row-2">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+        <div class="row" guess_number="3" role="link" tabindex="0" id="row-3">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+        <div class="row" guess_number="4" role="link" tabindex="0" id="row-4">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+        <div class="row" guess_number="5" role="link" tabindex="0" id="row-5">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+        <div class="row" guess_number="6" role="link" tabindex="0" id="row-6">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+            <input maxlength="1" class="character empty">
+        </div>
+    </div>
+    <button id="reset-button" class="reset-button">Reset Game</button>
+
+</body>
+<script>
+    // 1. Move focus FORWARD when typing a letter
+    $(".character.empty").on('input', function() {
+        if (this.value.length == this.maxLength) {
+            var $next = $(this).next('.character.empty');
+            if ($next.length) {
+                $next.focus();
+            } else {
+                $(this).blur();
+            }
+        }
+    });
+
+    // 2. Move focus BACKWARD when pressing Backspace
+    $(".character.empty").on('keydown', function(e) {
+        if (e.key === 'Backspace') {
+            // If the box is already empty, move focus to the previous box and clear it
+            if (this.value === '') {
+                var $prev = $(this).prev('.character.empty');
+                if ($prev.length) {
+                    $prev.focus().val('');
+                    e.preventDefault(); // Stop extra browser deletion actions
+                }
+            }
+        }
+    });
+    /* Event listener for the close button */
+    $('#message-close').on('click', function() {
+        $('#message-container').removeClass('message-container-visible').addClass('message-container-hidden');
+    });
+</script>
+</html>

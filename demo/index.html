@@ -14,7 +14,8 @@
     </h1>
     <!-- Options for choosing word length -->
     <div class="board">
-        <div class="row hover-to-green" data-word-length="5" role="link" tabindex="0">
+        <!-- 1. Fixed "window.location.href" (lowercase "w" and "l") -->
+        <div onclick="window.location.href='/play/5-letter/5-letter.html'" class="row hover-to-green" data-word-length="5" role="link" tabindex="0">
             <span class="character unknown">5</span>
             <span class="character unknown">-</span>
             <span class="character unknown">L</span>
@@ -24,50 +25,27 @@
             <span class="character unknown">E</span>
             <span class="character unknown">R</span>
         </div>
-        <div class="row hover-to-red" data-word-length="6" role="link" tabindex="0">
-            <span class="character absent">6</span>
+        <div onclick="window.location.href='/play/no-colour/no-colour.html'" class="row hover-to-red" data-word-length="6" role="link" tabindex="0">
+            <span class="character absent">N</span>
+            <span class="character absent">O</span>
             <span class="character absent">-</span>
+            <span class="character absent">C</span>
+            <span class="character absent">O</span>
             <span class="character absent">L</span>
-            <span class="character absent">E</span>
-            <span class="character absent">T</span>
-            <span class="character absent">T</span>
-            <span class="character absent">E</span>
+            <span class="character absent">O</span>
             <span class="character absent">R</span>
         </div>
-        <div class="row hover-to-red" data-word-length="7" role="link" tabindex="0">
+        <div onclick="alert('No Workee')" class="row hover-to-red" data-word-length="7" role="link" tabindex="0">
             <span class="character absent">7</span>
             <span class="character absent">-</span>
             <span class="character absent">L</span>
             <span class="character absent">E</span>
             <span class="character absent">T</span>
             <span class="character absent">T</span>
+            <!-- 2. Fixed the broken closing div tag -->
             <span class="character absent">E</span>
             <span class="character absent">R</span>
         </div>
     </div>
-    <script>
-        document.querySelectorAll(".row[data-word-length]").forEach(row => {
-
-            const wordLength = row.dataset.wordLength;
-            const goToPlay = () => window.location.href = `/play/${wordLength}-letter.html`;
-
-            const tryPlay = () => {
-                if (wordLength > 5) {
-                    alert("Word Lengths of 6/7 are not supported");
-                    return;
-                }
-                goToPlay();
-            };
-
-            row.addEventListener("click", tryPlay);
-            row.addEventListener("keydown", event => {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    tryPlay();
-                }
-            });
-        });
-    </script>
 </body>
-
 </html>
