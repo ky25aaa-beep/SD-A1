@@ -15,28 +15,37 @@ function normaliseWordList(rawList) {
 //generate a random 5 letter word from the list of words
 var wordList = [];
 function load_wordlist(){
-    /* https://darkermango.github.io/5-Letter-words/words.json */
-    /* fetch the word list from the url and store it in local storage */
+    /* Fetch the word list once, then reuse the cached copy on later visits. */
     const storedWordList = localStorage.getItem("wordList");
     const parsedStoredWordList = storedWordList ? JSON.parse(storedWordList) : [];
     const normalisedStoredWordList = normaliseWordList(parsedStoredWordList);
+    const statusRegion = document.getElementById("game-status");
 
     if (normalisedStoredWordList.length > 0) {
         wordList = normalisedStoredWordList;
         if (!Array.isArray(parsedStoredWordList) || (parsedStoredWordList.words && Array.isArray(parsedStoredWordList.words))) {
             localStorage.setItem("wordList", JSON.stringify(wordList));
         }
+        if (statusRegion) statusRegion.textContent = "Word list loaded. The game is ready.";
     } else {
+        if (statusRegion) statusRegion.textContent = "Loading the word list.";
         fetch("https://darkermango.github.io/5-Letter-words/words.json")
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) throw new Error(`Word list request failed: ${response.status}`);
+                return response.json();
+            })
             .then(data => {
-                /* make global varaible wordList and store the data in it */
                 wordList = normaliseWordList(data);
-                /* store the word list in local storage */
+                if (!wordList.length) throw new Error("The word list was empty or had an unsupported format.");
                 localStorage.setItem("wordList", JSON.stringify(wordList));
+                if (statusRegion) statusRegion.textContent = "Word list loaded. The game is ready.";
             })
             .catch(error => {
                 console.error("Error fetching word list:", error);
+                if (statusRegion) statusRegion.textContent = "The word list could not be loaded.";
+                if (typeof display_message === "function") {
+                    display_message("Word list unavailable", "The game could not load its word list. Check your internet connection, then refresh the page to try again.");
+                }
             });
     }
 }
@@ -72,6 +81,7 @@ function initialiseGame() {
     localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
     localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
     localStorage.setItem("known_unused_letters", JSON.stringify(known_unused_letters));
+    localStorage.setItem("guess_statuses", JSON.stringify([]));
 
     return random_word;
 }
@@ -99,6 +109,7 @@ function GET_guess_result(guess) {
         localStorage.setItem("result", JSON.stringify(result));
         localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
         localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
+        localStorage.setItem("guess_statuses", JSON.stringify(["known", "known", "known", "known", "known"]));
         return;
     } else {
         var result = ["incorrect"];
@@ -156,6 +167,7 @@ function GET_guess_result(guess) {
     localStorage.setItem("known_unused_letters", JSON.stringify(known_unused_letters));
     localStorage.setItem("result_known_positions", JSON.stringify(result_known_positions));
     localStorage.setItem("result_unknown_positions", JSON.stringify(result_unknown_positions));
+    localStorage.setItem("guess_statuses", JSON.stringify(guess_statuses));
 }
 /* function to reset the game if reset-button is pressed (reset session storage and reload the page) */
 function resetGame() {
@@ -166,7 +178,10 @@ function resetGame() {
     localStorage.removeItem("result_known_positions");
     localStorage.removeItem("result_unknown_positions");
     localStorage.removeItem("known_unused_letters");
+    localStorage.removeItem("guess_statuses");
     location.reload();
 }
 
 document.getElementById("reset-button").addEventListener("click", resetGame);
+
+

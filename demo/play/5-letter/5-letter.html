@@ -13,53 +13,54 @@
 </head>
 
 <body>
-    <div id="message-container" class="message-container-hidden">
+    <div id="message-container" class="message-container-hidden" role="alert" aria-live="assertive" aria-atomic="true">
         <h1 id="message-title"></h1>
         <p id="message-content"></p>
-        <span id="message-close" class="message-close" role="button" tabindex="0">Close</span>
+        <button id="message-close" class="message-close" type="button">Close</button>
     </div>
         
     <h1 class="characters" aria-label="Wordle">
         <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
     </h1>
-    <!-- Guess Rows -->
-    <div class="board">
-        <div class="row" guess_number="1" role="link" tabindex="0" id="row-1">
+    <p id="game-instructions">Enter one letter in each box. Use the letter boxes with your keyboard and press Enter in the final box to submit a complete guess. You have six guesses.</p>
+    <p id="game-status" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></p>
+        <div class="board" aria-label="Guess board">
+        <div class="row" guess_number="1" role="group" aria-label="Guess 1 of 6" id="row-1">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
         </div>
-        <div class="row" guess_number="2" role="link" tabindex="0" id="row-2">
+        <div class="row" guess_number="2" role="group" aria-label="Guess 2 of 6" id="row-2">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
         </div>
-        <div class="row" guess_number="3" role="link" tabindex="0" id="row-3">
+        <div class="row" guess_number="3" role="group" aria-label="Guess 3 of 6" id="row-3">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
         </div>
-        <div class="row" guess_number="4" role="link" tabindex="0" id="row-4">
+        <div class="row" guess_number="4" role="group" aria-label="Guess 4 of 6" id="row-4">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
         </div>
-        <div class="row" guess_number="5" role="link" tabindex="0" id="row-5">
+        <div class="row" guess_number="5" role="group" aria-label="Guess 5 of 6" id="row-5">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
         </div>
-        <div class="row" guess_number="6" role="link" tabindex="0" id="row-6">
+        <div class="row" guess_number="6" role="group" aria-label="Guess 6 of 6" id="row-6">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
             <input maxlength="1" class="character empty">
@@ -99,6 +100,9 @@
     /* Event listener for the close button */
     $('#message-close').on('click', function() {
         $('#message-container').removeClass('message-container-visible').addClass('message-container-hidden');
+        const nextInput = document.querySelector(`#row-${current_guess_number} .character:not(:disabled)`);
+        if (nextInput) nextInput.focus();
     });
+
 </script>
 </html>

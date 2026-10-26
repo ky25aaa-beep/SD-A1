@@ -6,99 +6,69 @@
 var current_guess_number = 1;
 var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
-let isFlashing = false; 
+
 
 async function Format_Result_and_display() {
-    /* load the result from local storage and apply to the previous row and then move to the next row */
-    var result = JSON.parse(localStorage.getItem("result") || "[]");
-    var result_known_positions = JSON.parse(localStorage.getItem("result_known_positions") || "{}");
-    var result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
-    var known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
-    /* get previous guess row */
-    var previous_row = document.getElementById(`row-${current_guess_number}`);
-    /* green class is .known add .known to the character box if the letter is in the correct position, yellow class is .unknown add .unknown to the character box if the letter is in the word but not in the correct position, red class is .absent add .absent to the character box if the letter is not in the word */
+    const result = JSON.parse(localStorage.getItem("result") || "[]");
+    const result_known_positions = JSON.parse(localStorage.getItem("result_known_positions") || "{}");
+    const result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
+    const known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
+    const guess_statuses = JSON.parse(localStorage.getItem("guess_statuses") || "[]");
+    const submitted_guess_number = current_guess_number;
+    const previous_row = document.getElementById(`row-${submitted_guess_number}`);
+    if (!previous_row) return;
+
+    const statusText = {
+        known: "correct and in the correct position",
+        unknown: "in the answer but in a different position",
+        absent: "not in the answer"
+    };
+    const feedback = [];
+
     for (let i = 0; i < 5; i++) {
-        let character = previous_row.children[i];
-        if (result_known_positions[i]) {
-            character.classList.add("known");
-
-        } else if (result_unknown_positions.includes(character.value)) {
-            character.classList.add("unknown");
-        } else if (known_unused_letters.includes(character.value)) {
-            character.classList.add("absent");
-        }
-        /* remove the empty class from the character box */
-        character.classList.remove("empty");
-        /* disable the character box so that the user cannot type in it */
+        const character = previous_row.children[i];
+        const letter = (character.value || "").toUpperCase();
+        const status = guess_statuses[i] || (result_known_positions[i] ? "known" : (result_unknown_positions.includes(character.value) ? "unknown" : (known_unused_letters.includes(character.value) ? "absent" : "absent")));
+        character.classList.remove("known", "unknown", "absent", "empty");
+        character.classList.add(status);
+        character.setAttribute("aria-label", `Guess ${submitted_guess_number} of 6, letter ${i + 1} of 5, ${letter}: ${statusText[status]}`);
         character.disabled = true;
-
+        feedback.push(`Letter ${i + 1}, ${letter}: ${statusText[status]}`);
     }
-    /* move to the next row */
+
     current_guess_number++;
     current_row = document.getElementById(`row-${current_guess_number}`);
-    if (current_guess_number <= 6) {
-        close_input_row();
-    }
-    if (result[0] === "correct") {
-        /* disable all the character boxes so that the user cannot type in them */
+    if (current_guess_number <= 6) close_input_row();
+
+    const hasWon = result[0] === "correct";
+    const hasLost = !hasWon && submitted_guess_number === 6;
+    if (hasWon || hasLost) {
         for (let i = 1; i <= 6; i++) {
-            let row = document.getElementById(`row-${i}`);
-            if (row) {
-                let inputs = row.querySelectorAll('.character');
-                inputs.forEach((input) => {
-                    input.disabled = true;
-                });
-            }
-        }
-    } else if (current_guess_number > 6) {
-        display_message("Game Over", "The word was: " + localStorage.getItem("random_word"));
-        /* disable all the character boxes so that the user cannot type in them */
-        for (let i = 1; i <= 6; i++) {
-            let row = document.getElementById(`row-${i}`);
-            if (row) {
-                let inputs = row.querySelectorAll('.character');
-                inputs.forEach((input) => {
-                    input.disabled = true;
-                });
-            }
+            const row = document.getElementById(`row-${i}`);
+            if (row) row.querySelectorAll(".character").forEach(input => { input.disabled = true; });
         }
     }
-    handleFlashAndInput();
-    current_row.children[0].focus();
-    attachGuessSubmitHandler();
 
-}
+    let announcement = `Guess ${submitted_guess_number} feedback. ${feedback.join(". ")}.`;
+    if (hasWon) {
+        announcement += " You won the game.";
+        display_message("You win", "You found the word.");
+    } else if (hasLost) {
+        const answer = localStorage.getItem("random_word");
+        announcement += ` You used all six guesses. The answer was ${answer}.`;
+        display_message("Game Over", `The word was: ${answer}`);
+    } else {
+        const remaining = 6 - submitted_guess_number;
+        announcement += ` ${remaining} guesses remaining.`;
 
-
-async function flashCurrentGuess() {
-    isFlashing = true; // Set to true when the flash starts
-    
-    const current_row = document.getElementById(`row-${current_guess_number}`);
-    if (!current_row) return;
-
-    while (isFlashing) { // The loop will now exit if isFlashing becomes false
-        for (let i = 0; i < 5; i++) {
-            let character = current_row.children[i];
-            if (character) character.value = "_";
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
-        if (!isFlashing) break; // Check again after the wait
-
-        for (let i = 0; i < 5; i++) {
-            let character = current_row.children[i];
-            if (character) character.value = " ";
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    // Clean up: Clear the underscores/spaces when the flash stops
-    for (let i = 0; i < 5; i++) {
-        let character = current_row.children[i];
-        if (character && character.value === " " || character.value === "_") {
-            character.value = "";
-        }
+    announceGameStatus(announcement);
+
+    if (!hasWon && !hasLost && current_row && current_row.children[0]) {
+        handleFlashAndInput();
+        current_row.children[0].focus();
+        attachGuessSubmitHandler();
     }
 }
 
@@ -183,21 +153,13 @@ function ConvertRowtoGuess() {
     }
 }
 
-/*
-flash guess until the row is being clicked on/items are being types in that word, also once someone had typed a letter into that box move to the next box
-*/
+/* Move focus to the next letter box as the player types. */
 function handleFlashAndInput() {
   const currentRow = document.getElementById(`row-${current_guess_number}`);
 
   if (!currentRow) return;
 
   const inputs = currentRow.querySelectorAll('.character');
-
-  // STOP THE FLASH WHEN SELECTED:
-  // The moment the user clicks or focuses any box in the row, the loop breaks
-  currentRow.addEventListener('focusin', () => {
-    isFlashing = false;
-  });
 
   currentRow.addEventListener('input', (e) => {
     const index = Array.from(inputs).indexOf(e.target);
@@ -215,52 +177,63 @@ function handleFlashAndInput() {
     }
   });
 
-  // Start the flash if the first box is empty
-  if (inputs[0] && inputs[0].value === "") {
-    flashCurrentGuess();
-  }
 }
 
 function attachGuessSubmitHandler() {
     const currentRow = document.getElementById(`row-${current_guess_number}`);
     if (!currentRow) return;
 
-    const inputs = Array.from(currentRow.querySelectorAll('.character'));
+    const inputs = Array.from(currentRow.querySelectorAll(".character"));
     const lastInput = inputs[inputs.length - 1];
-    if (!lastInput) return;
+    if (!lastInput || lastInput.dataset.submitHandlerAttached === "true") return;
+    lastInput.dataset.submitHandlerAttached = "true";
 
-    lastInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') {
-            if (inputs.every(input => input.value !== '')) {
-                ConvertRowtoGuess();
-            } else {
-                display_message("Missing letters", "Please fill in all letters before submitting your guess.");
-            }
+    lastInput.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        if (!inputs.every(input => input.value !== "")) {
+            display_message("Missing letters", "Please fill in all letters before submitting your guess.");
+            return;
         }
-    });
-    /* if all the words have been filled and the user tabs out of the last box, submit the guess */
-    lastInput.addEventListener('blur', function (e) {
-        if (inputs.every(input => input.value !== '')) {
-            const guessSubmitted = ConvertRowtoGuess();
-            if (guessSubmitted) {
-                console.log("Guess submitted on blur (tab out)")
-                Format_Result_and_display();
-            }
-        }
+        if (ConvertRowtoGuess()) Format_Result_and_display();
     });
 }
 
-
 function display_message(title, content) {
-    const messageContainer = document.getElementById('message-container');
-    const messageTitle = document.getElementById('message-title');
-    const messageContent = document.getElementById('message-content');
+    const messageContainer = document.getElementById("message-container");
+    const messageTitle = document.getElementById("message-title");
+    const messageContent = document.getElementById("message-content");
 
     messageTitle.textContent = title;
     messageContent.textContent = content;
-    messageContainer.classList.remove('message-container-hidden');
-    messageContainer.classList.add('message-container-visible');
+    messageContainer.classList.remove("message-container-hidden");
+    messageContainer.classList.add("message-container-visible");
+    const closeButton = document.getElementById("message-close");
+    if (closeButton) closeButton.focus();
 }
+
+function labelGuessInputs() {
+    for (let rowNumber = 1; rowNumber <= 6; rowNumber++) {
+        const row = document.getElementById(`row-${rowNumber}`);
+        if (!row) continue;
+        row.setAttribute("role", "group");
+        row.setAttribute("aria-label", `Guess ${rowNumber} of 6`);
+        row.removeAttribute("tabindex");
+        row.querySelectorAll(".character").forEach((input, index) => {
+            input.setAttribute("aria-label", `Guess ${rowNumber} of 6, letter ${index + 1} of 5`);
+            input.setAttribute("aria-describedby", "game-instructions");
+            input.setAttribute("autocomplete", "off");
+            input.setAttribute("autocapitalize", "characters");
+            input.setAttribute("spellcheck", "false");
+        });
+    }
+}
+
+function announceGameStatus(message) {
+    const statusRegion = document.getElementById("game-status");
+    if (statusRegion) statusRegion.textContent = message;
+}
+
 function close_input_row() {
     for (let i = 1; i <= 6; i++) {
         let row = document.getElementById(`row-${i}`);
@@ -279,10 +252,14 @@ function close_input_row() {
         input.disabled = false;
     }
 }
-close_input_row();
+labelGuessInputs();
+    close_input_row();
 
 handleFlashAndInput();
 
 attachGuessSubmitHandler();
+
+
+
 
 
