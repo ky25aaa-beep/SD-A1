@@ -179,6 +179,7 @@ function resetGame() {
     localStorage.removeItem("result_unknown_positions");
     localStorage.removeItem("known_unused_letters");
     localStorage.removeItem("guess_statuses");
+    localStorage.removeItem('confirmed_position_letters');
     location.reload();
 }
 

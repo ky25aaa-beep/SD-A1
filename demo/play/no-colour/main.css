@@ -176,3 +176,76 @@ state {
         transform: translate(-50%, -50%) scale(1);
     }
 }
+
+/* No-colour game layout: key left, board centre, text feedback right */
+.game-layout {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) auto minmax(18rem, 1fr);
+    align-items: start;
+    gap: 2rem;
+    max-width: 76rem;
+    margin: 2rem auto;
+    text-align: left;
+}
+
+.feedback-key,
+.guess-feedback {
+    padding: 1rem;
+    border: 1px solid #555b68;
+    border-radius: 0.5rem;
+    background: #22252d;
+}
+
+.feedback-key h2,
+.guess-feedback h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.feedback-key ul {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.feedback-key li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: left;
+}
+
+.feedback-key img {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 auto;
+}
+
+.guess-feedback p {
+    line-height: 1.6;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.board {
+    min-width: max-content;
+    text-align: center;
+}
+
+.board .row {
+    white-space: nowrap;
+}
+
+#game-instructions {
+    max-width: 55rem;
+    margin: 1rem auto;
+}
+
+.guess-feedback.won {
+    border: 3px solid #70cf8b;
+    background: #183020;
+}
+
+.guess-feedback.won h2 {
+    color: #a8f0ba;
+    font-size: 1.6rem;
+}

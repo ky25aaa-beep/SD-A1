@@ -8,16 +8,98 @@ var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
 let isFlashing = false; 
 
+function rowToWord(row) {
+    return Array.from(row.children, input => input.value || '').join('').toUpperCase();
+}
+function updateGuessFeedback(row, guessNumber, statuses, knownPositions, won) {
+    const misplacedLetters = [];
+    const absentLetters = [];
+
+    for (let index = 0; index < 5; index++) {
+        const letter = (row.children[index].value || '').toUpperCase();
+        if (statuses[index] === 'unknown') misplacedLetters.push(letter);
+        if (statuses[index] === 'absent') absentLetters.push(letter);
+    }
+
+    const confirmedPositions = JSON.parse(localStorage.getItem('confirmed_position_letters') || '{}');
+    Object.entries(knownPositions).forEach(([position, letter]) => {
+        confirmedPositions[position] = letter.toUpperCase();
+    });
+    localStorage.setItem('confirmed_position_letters', JSON.stringify(confirmedPositions));
+
+    const known = [];
+    const unconfirmed = [];
+    for (let index = 0; index < 5; index++) {
+        if (confirmedPositions[index]) {
+            known.push(`Character ${index + 1} is ${confirmedPositions[index]}`);
+        } else {
+            unconfirmed.push(`Character ${index + 1}`);
+        }
+    }
+
+    const feedbackTitle = document.getElementById('guess-feedback-title');
+    const feedbackPanel = document.querySelector('.guess-feedback');
+    if (feedbackTitle) {
+        if (won) {
+            feedbackTitle.textContent = 'You won!';
+        } else {
+            feedbackTitle.textContent = 'Guess feedback';
+        }
+    }
+
+    if (feedbackPanel) {
+        feedbackPanel.classList.toggle('won', won);
+    }
+
+    const lines = [];
+    if (won) {
+        let guessWord = 'guesses';
+        if (guessNumber === 1) {
+            guessWord = 'guess';
+        }
+        lines.push(`You won! You solved the word in ${guessNumber} ${guessWord}.`);
+        lines.push(`Winning word: ${rowToWord(row)}.`);
+    } else {
+        lines.push(`Guess ${guessNumber} feedback:`);
+    }
+    const correctThisGuess = Object.entries(knownPositions)
+        .map(([position, letter]) => `Character ${Number(position) + 1} is ${letter.toUpperCase()}`);
+
+    if (correctThisGuess.length > 0) {
+        lines.push(`Correct position: ${correctThisGuess.join('; ')}.`);
+    } else {
+        lines.push('No letters are in the correct position in this guess.');
+    }
+
+    if (misplacedLetters.length > 0) {
+        lines.push(`In the answer but in the wrong position: ${misplacedLetters.join(', ')}.`);
+    } else {
+        lines.push('No letters in this guess are confirmed in a different position.');
+    }
+
+    if (absentLetters.length > 0) {
+        lines.push(`Not in the answer: ${absentLetters.join(', ')}.`);
+    } else {
+        lines.push('No letters in this guess were marked absent.');
+    }
+    lines.push(`Confirmed positions so far: ${known.join('; ') || 'none yet'}.`);
+    lines.push(`Not confirmed yet: ${unconfirmed.join(', ') || 'all positions are confirmed'}.`);
+
+    const feedbackBox = document.getElementById('guess-feedback');
+    if (feedbackBox) feedbackBox.textContent = lines.join('\n');
+}
 async function Format_Result_and_display() {
     /* load the result from local storage and apply to the previous row and then move to the next row */
     var result = JSON.parse(localStorage.getItem("result") || "[]");
     var result_known_positions = JSON.parse(localStorage.getItem("result_known_positions") || "{}");
     var result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
     var known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
+    var guess_statuses = JSON.parse(localStorage.getItem('guess_statuses') || '[]');
     console.log(result_known_positions)
     console.log(result_unknown_positions)
     /* get previous guess row */
     var previous_row = document.getElementById(`row-${current_guess_number}`);
+    updateGuessFeedback(previous_row, current_guess_number, guess_statuses, result_known_positions, result[0] === "correct");
 
     /* Prioritized style application using an if-else chain to prevent duplicate letters from overwriting each other */
     for (let i = 0; i < 5; i++) {

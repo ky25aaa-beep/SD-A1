@@ -9,7 +9,6 @@
     <script src="no-colour.js" defer></script>
     <script src="../api/5-letter.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 </head>
 
 <body>
@@ -18,56 +17,73 @@
         <p id="message-content"></p>
         <span id="message-close" class="message-close" role="button" tabindex="0">Close</span>
     </div>
-        
+
     <h1 class="characters" aria-label="Wordle">
         <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
     </h1>
-    <!-- Guess Rows -->
-    <div class="board">
-        <div class="row" guess_number="1" role="link" tabindex="0" id="row-1">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
+    <p id="game-instructions">Enter one letter in each box. Use the letter boxes with your keyboard and press Enter in the final box to submit a complete guess. You have six guesses.</p>
+
+    <main class="game-layout">
+        <aside class="feedback-key" aria-labelledby="feedback-key-title">
+            <h2 id="feedback-key-title">Feedback key</h2>
+            <ul>
+                <li><img src="Tick Square.png" alt=""> Correct position</li>
+                <li><img src="Question Square.png" alt=""> In the answer, wrong position</li>
+                <li><img src="Cross Square.png" alt=""> Not in the answer</li>
+            </ul>
+        </aside>
+
+        <div class="board" aria-label="Guess board">
+            <div class="row" guess_number="1" role="group" aria-label="Guess 1 of 6" id="row-1">
+                <input maxlength="1" class="character empty" aria-label="Guess 1, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 1, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 1, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 1, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 1, character 5">
+            </div>
+            <div class="row" guess_number="2" role="group" aria-label="Guess 2 of 6" id="row-2">
+                <input maxlength="1" class="character empty" aria-label="Guess 2, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 2, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 2, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 2, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 2, character 5">
+            </div>
+            <div class="row" guess_number="3" role="group" aria-label="Guess 3 of 6" id="row-3">
+                <input maxlength="1" class="character empty" aria-label="Guess 3, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 3, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 3, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 3, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 3, character 5">
+            </div>
+            <div class="row" guess_number="4" role="group" aria-label="Guess 4 of 6" id="row-4">
+                <input maxlength="1" class="character empty" aria-label="Guess 4, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 4, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 4, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 4, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 4, character 5">
+            </div>
+            <div class="row" guess_number="5" role="group" aria-label="Guess 5 of 6" id="row-5">
+                <input maxlength="1" class="character empty" aria-label="Guess 5, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 5, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 5, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 5, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 5, character 5">
+            </div>
+            <div class="row" guess_number="6" role="group" aria-label="Guess 6 of 6" id="row-6">
+                <input maxlength="1" class="character empty" aria-label="Guess 6, character 1">
+                <input maxlength="1" class="character empty" aria-label="Guess 6, character 2">
+                <input maxlength="1" class="character empty" aria-label="Guess 6, character 3">
+                <input maxlength="1" class="character empty" aria-label="Guess 6, character 4">
+                <input maxlength="1" class="character empty" aria-label="Guess 6, character 5">
+            </div>
         </div>
-        <div class="row" guess_number="2" role="link" tabindex="0" id="row-2">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-        </div>
-        <div class="row" guess_number="3" role="link" tabindex="0" id="row-3">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-        </div>
-        <div class="row" guess_number="4" role="link" tabindex="0" id="row-4">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-        </div>
-        <div class="row" guess_number="5" role="link" tabindex="0" id="row-5">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-        </div>
-        <div class="row" guess_number="6" role="link" tabindex="0" id="row-6">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-            <input maxlength="1" class="character empty">
-        </div>
-    </div>
-    <button id="reset-button" class="reset-button">Reset Game</button>
+
+        <aside class="guess-feedback" aria-labelledby="guess-feedback-title">
+            <h2 id="guess-feedback-title">Guess feedback</h2>
+            <p id="guess-feedback" role="status" aria-live="polite" aria-atomic="true">Feedback for your submitted guesses will appear here.</p>
+        </aside>
+    </main>
+    <button id="reset-button" class="reset-button" type="button">Reset Game</button>
 
 </body>
 <script>
@@ -86,17 +102,15 @@
     // 2. Move focus BACKWARD when pressing Backspace
     $(".character.empty").on('keydown', function(e) {
         if (e.key === 'Backspace') {
-            // If the box is already empty, move focus to the previous box and clear it
             if (this.value === '') {
                 var $prev = $(this).prev('.character.empty');
                 if ($prev.length) {
                     $prev.focus().val('');
-                    e.preventDefault(); // Stop extra browser deletion actions
+                    e.preventDefault();
                 }
             }
         }
     });
-    /* Event listener for the close button */
     $('#message-close').on('click', function() {
         $('#message-container').removeClass('message-container-visible').addClass('message-container-hidden');
     });
