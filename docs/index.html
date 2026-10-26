@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <title>Wordle Game</title>
+</head>
+
+<body>
+    <h1 class="characters" aria-label="Wordle">
+        <span>W</span><span>O</span><span>R</span><span>D</span><span>L</span><span>E</span>
+    </h1>
+    <!-- Options for choosing word length -->
+    <div class="board">
+        <!-- 1. Fixed "window.location.href" (lowercase "w" and "l") -->
+        <div onclick="window.location.href='/play/5-letter/5-letter.html'" class="row hover-to-green" data-word-length="5" role="link" tabindex="0">
+            <span class="character unknown">C</span>
+            <span class="character unknown">O</span>
+            <span class="character unknown">L</span>
+            <span class="character unknown">O</span>
+            <span class="character unknown">U</span>
+            <span class="character unknown">R</span>
+            <span class="character unknown">_</span>
+            <span class="character unknown">M</span>
+            <span class="character unknown">O</span>
+            <span class="character unknown">D</span>
+            <span class="character unknown">E</span>
+
+        </div>
+        <div onclick="window.location.href='/play/no-colour/no-colour.html'" class="row hover-to-green" data-word-length="6" role="link" tabindex="0">
+            <span class="character unknown">A</span>
+            <span class="character unknown">C</span>
+            <span class="character unknown">C</span>
+            <span class="character unknown">E</span>
+            <span class="character unknown">S</span>
+            <span class="character unknown">S</span>
+            <span class="character unknown">_</span>
+            <span class="character unknown">M</span>
+            <span class="character unknown">O</span>
+            <span class="character unknown">D</span>
+            <span class="character unknown">E</span>
+
+
+        </div>
+    </div>
+</body>
+</html>
