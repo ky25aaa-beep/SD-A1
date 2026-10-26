@@ -4,17 +4,17 @@
 
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
-// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
-// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026).
+// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026).
 var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
 
 
-// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026).
 async function Format_Result_and_display() {
-    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
-    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
-    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
+    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026).
+    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026).
+    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026).
     const result = JSON.parse(localStorage.getItem("result") || "[]");
     const result_known_positions = JSON.parse(localStorage.getItem("result_known_positions") || "{}");
     const result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
@@ -31,7 +31,7 @@ async function Format_Result_and_display() {
     };
     const feedback = [];
 
-    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026). First recorded code use: commit df1ca22.
+    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026).
     // Supporting explanation: JavaScript.info (2022) Loops: while and for. https://javascript.info/while-for (Accessed: 26 October 2026).
     for (let i = 0; i < 5; i++) {
         const character = previous_row.children[i];
@@ -42,7 +42,7 @@ async function Format_Result_and_display() {
         character.setAttribute("aria-label", `Guess ${submitted_guess_number} of 6, letter ${i + 1} of 5, ${letter}: ${statusText[status]}`);
         // MDN Web Docs (2025) HTMLInputElement: disabled property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/disabled (Accessed: 14 October 2026).
         character.disabled = true;
-        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
+        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026).
         feedback.push(`Letter ${i + 1}, ${letter}: ${statusText[status]}`);
     }
 

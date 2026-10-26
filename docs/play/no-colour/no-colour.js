@@ -4,13 +4,13 @@
 
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
-// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
-// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026).
+// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026).
 var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
 let isFlashing = false; 
 
-// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026).
 function rowToWord(row) {
     return Array.from(row.children, input => input.value || '').join('').toUpperCase();
 }
@@ -18,17 +18,17 @@ function updateGuessFeedback(row, guessNumber, statuses, knownPositions, won) {
     const misplacedLetters = [];
     const absentLetters = [];
 
-    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026). First recorded code use: commit df1ca22.
+    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026).
     for (let index = 0; index < 5; index++) {
         const letter = (row.children[index].value || '').toUpperCase();
-        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
+        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026).
         if (statuses[index] === 'unknown') misplacedLetters.push(letter);
         if (statuses[index] === 'absent') absentLetters.push(letter);
     }
 
-    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
-    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
-    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
+    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026).
+    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026).
+    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026).
     const confirmedPositions = JSON.parse(localStorage.getItem('confirmed_position_letters') || '{}');
     Object.entries(knownPositions).forEach(([position, letter]) => {
         confirmedPositions[position] = letter.toUpperCase();

@@ -65,8 +65,6 @@ Potential improvements include:
 - Add automated checks for repeated letters, accepted and rejected guesses, win/loss conditions, and reset behavior.
 - Record browser and device details with the manual test evidence so results can be repeated.
 
-These are recommendations for future work, not claims that the features are implemented.
-
 ## 5. Tools and design methods
 
 GitHub provided version control and a history of changes, while GitHub Pages published the completed static application. These serve different purposes: commits document development, while Pages makes the game available to players. Renaming `demo` to `docs` allowed that folder to be selected as the publishing source. The history is useful evidence, although recording more design notes alongside each change would have made the decisions easier to explain later.
