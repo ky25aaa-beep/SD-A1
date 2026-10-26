@@ -127,7 +127,7 @@ Two approaches were considered: calculate the position statuses again in the dis
 An algorithm check using answer `apple` and guess `allee` returned `known, unknown, absent, absent, known`, correctly treating the extra `l` as absent. This check and JavaScript syntax checks passed.
 ### Browser check: input placeholder animation
 
-A browser interaction check found that the previous flashing effect wrote underscore characters into empty input values. This could make an incomplete row appear complete to the guess-length check and expose placeholder characters as entered text. The effect was removed so the inputs remain empty until the player types. After the change, submitting a partially filled row produced the “Missing letters” message, and a complete valid guess advanced normally.
+In colour mode, a browser interaction check found that the previous flashing effect wrote underscore characters into empty input values. This could make an incomplete row appear complete to the guess-length check and expose placeholder characters as entered text. The effect was removed so the inputs remain empty until the player types. After the change, submitting a partially filled row produced the “Missing letters” message, and a complete valid guess advanced normally.
 ## Additional Feature: Blind-Friendly Interaction
 
 The project extends the core guessing game with a blind-friendly interaction design. Letter inputs receive row-and-position names, guess results are described in text, and a live status region announces feedback and remaining attempts. Keyboard submission and visible focus styling are also included. This is intended as the project’s additional feature beyond the basic word-guessing loop.
@@ -225,7 +225,7 @@ flowchart TD
 
 ## Test Plan
 
-The cases below come from the requirements. T0–T6 and T9 have been checked using syntax checks, an isolated algorithm check, and browser interaction checks. T7 and T8 are still planned.
+The cases below come from the requirements. T0–T6 and T9 have been checked using syntax checks, an isolated algorithm check, and browser interaction checks. T7 was reported successful by the developer; its screenshot evidence is linked below. T8 has not been run.
 
 | ID | Feature or scenario | Expected result | Actual result / status |
 |---|---|---|---|
@@ -236,9 +236,9 @@ The cases below come from the requirements. T0–T6 and T9 have been checked usi
 | T4 | Guess `allee` when the answer is `apple` | Exact matches are handled first; the extra `l` is absent after the answer's only `l` has been matched. | PASS, algorithm check: `known, unknown, absent, absent, known`. |
 | T5 | Guess the hidden answer | The game announces a win and prevents further guesses in that game. | PASS: browser interaction check; after `crane`, submitting the revealed test answer `ethos` announced “You win” and disabled the rows. |
 | T6 | Use six valid guesses without finding the answer | The game announces a loss, reveals the answer, and prevents another guess in that game. | PASS: browser interaction check with `crane`, `slate`, `brook`, `plant`, `brick`, and `flame`; after guess six the game announced “Game Over” and revealed the answer. |
-| T7 | Play using only a keyboard and screen reader | Inputs, focus, instructions, feedback, remaining attempts, and end-game messages are understandable without relying on colour or images alone. | Not run |
+| T7 | Play using a keyboard and screen reader | Inputs and game feedback are understandable without relying on colour or images alone. | PASS — reported by the developer. Screen-reader use worked in the tested session. Screenshot evidence: [screen-reader test](EVIDENCE_IMG/07-accessible-screenreader-test.png). |
 | T8 | Make the word list unavailable | The game explains that the list could not be loaded and gives a clear next step without starting an unusable game. | Not run |
-| T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS: after winning, Reset Game cleared the board and returned to Guess 1. |
+| T9 | Start a new game after a completed game | Previous guesses and feedback are cleared, and a new game begins at the first row. | PASS in colour mode. FAIL in accessible mode: the reset board contains underscore or space values. See EVIDENCE_IMG/05-accessible-T9-after-reset.png and 06-colour-T9-after-reset.png. |
 
 ## Main Feature Screenshots
 
@@ -332,6 +332,27 @@ The first iteration of Access Mode used boxes of size 16px by 16px this lead to 
 
 - [Formatting issue](README_IMG/SCREENSHOT-ERROR-INC-FORMATTING.png)
 - [Syntax or iteration issue](README_IMG/SCREENSHOT-ERROR-SYN-NO-ITERATION.png)
+
+### Outstanding accessible-mode input issue
+
+The placeholder animation remains in accessible mode. It inserts underscores or spaces into the inputs, and the recorded checks found that typing immediately after focusing a row could drop letters. Reset also returns to placeholder values rather than genuinely empty inputs. These issues remain unresolved; the colour-mode animation fix should not be treated as a fix for both modes.
+
+- [Idle placeholder values](EVIDENCE_IMG/01-accessible-idle-placeholders.png)
+- [Dropped letters](EVIDENCE_IMG/02-accessible-dropped-letters.png)
+- [Colour-mode comparison](EVIDENCE_IMG/03-colour-same-typing-ok.png)
+- [Accessible-mode reset](EVIDENCE_IMG/05-accessible-T9-after-reset.png)
+
+## Development Approach and Risks
+
+The project used prototyping to explore a Flask/API version before moving to client-side JavaScript for simpler GitHub Pages deployment. The scope was then reduced from three word lengths to one five-letter game with an accessible mode. The commit evidence and comparison of approaches are discussed in evaluation.md, section 3.
+
+| Risk | Effect | Response or remaining limitation |
+|---|---|---|
+| Too much scope | Three word lengths could prevent completion of the core game | Reduced to five-letter play with an accessible mode |
+| Hosting mismatch | GitHub Pages cannot run the Flask backend | Moved game logic to client-side JavaScript |
+| External dependencies | Word-list or jQuery requests may fail | Word list is cached; first-load failure testing remains outstanding |
+| Input and accessibility behaviour | Focus, placeholders or popup controls may interrupt play | Recorded issues in EVIDENCE_IMG; accessible-mode fixes and retests remain necessary |
+| Late documentation and testing | Less time to explain decisions and resolve defects | Record this limitation in the evaluation and use earlier checkpoints in future work |
 
 ## Development Constraints
 
