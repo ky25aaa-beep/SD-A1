@@ -4,11 +4,17 @@
 
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
+// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
 var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
 
 
+// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
 async function Format_Result_and_display() {
+    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
     const result = JSON.parse(localStorage.getItem("result") || "[]");
     const result_known_positions = JSON.parse(localStorage.getItem("result_known_positions") || "{}");
     const result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
@@ -25,6 +31,8 @@ async function Format_Result_and_display() {
     };
     const feedback = [];
 
+    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026). First recorded code use: commit df1ca22.
+    // Supporting explanation: JavaScript.info (2022) Loops: while and for. https://javascript.info/while-for (Accessed: 26 October 2026).
     for (let i = 0; i < 5; i++) {
         const character = previous_row.children[i];
         const letter = (character.value || "").toUpperCase();
@@ -32,7 +40,9 @@ async function Format_Result_and_display() {
         character.classList.remove("known", "unknown", "absent", "empty");
         character.classList.add(status);
         character.setAttribute("aria-label", `Guess ${submitted_guess_number} of 6, letter ${i + 1} of 5, ${letter}: ${statusText[status]}`);
+        // MDN Web Docs (2025) HTMLInputElement: disabled property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/disabled (Accessed: 14 October 2026).
         character.disabled = true;
+        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
         feedback.push(`Letter ${i + 1}, ${letter}: ${statusText[status]}`);
     }
 
@@ -67,6 +77,7 @@ async function Format_Result_and_display() {
 
     if (!hasWon && !hasLost && current_row && current_row.children[0]) {
         handleFlashAndInput();
+        // MDN Web Docs (2025) HTMLElement: focus() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus (Accessed: 30 September 2026).
         current_row.children[0].focus();
         attachGuessSubmitHandler();
     }
@@ -198,6 +209,9 @@ function attachGuessSubmitHandler() {
         if (ConvertRowtoGuess()) Format_Result_and_display();
     });
 
+    // MDN Web Docs (2026) Element: blur event. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event (Accessed: 14 October 2026).
+    // MDN Web Docs (2026) EventTarget: addEventListener() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener (Accessed: 30 September 2026).
+    // MDN Web Docs (2026) Array.prototype.every(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every (Accessed: 14 October 2026).
     lastInput.addEventListener("blur", function () {
         if (inputs.every(input => input.value !== "")) {
             const guessSubmitted = ConvertRowtoGuess();
@@ -209,11 +223,13 @@ function attachGuessSubmitHandler() {
 
 }
 
+// Supporting explanation: JavaScript.info (2026) Functions. https://javascript.info/function-basics (Accessed: 26 October 2026).
 function display_message(title, content) {
     const messageContainer = document.getElementById("message-container");
     const messageTitle = document.getElementById("message-title");
     const messageContent = document.getElementById("message-content");
 
+    // Video DOM example: Codecademy (2020), 1:10:22–1:14:14. https://www.youtube.com/watch?v=O8PlcR-4GRQ&t=4222s (Accessed: 26 October 2026). Uses the same general DOM-update concept, not identical code.
     messageTitle.textContent = title;
     messageContent.textContent = content;
     messageContainer.classList.remove("message-container-hidden");

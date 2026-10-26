@@ -4,10 +4,13 @@
 
 //Make Current guess underscore flashing inside the box my default current_guess is 1 
 var current_guess_number = 1;
+// MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
+// MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
 var current_row = document.getElementById(`row-${current_guess_number}`);
 let isunknown = false;
 let isFlashing = false; 
 
+// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
 function rowToWord(row) {
     return Array.from(row.children, input => input.value || '').join('').toUpperCase();
 }
@@ -15,12 +18,17 @@ function updateGuessFeedback(row, guessNumber, statuses, knownPositions, won) {
     const misplacedLetters = [];
     const absentLetters = [];
 
+    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026). First recorded code use: commit df1ca22.
     for (let index = 0; index < 5; index++) {
         const letter = (row.children[index].value || '').toUpperCase();
+        // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
         if (statuses[index] === 'unknown') misplacedLetters.push(letter);
         if (statuses[index] === 'absent') absentLetters.push(letter);
     }
 
+    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
     const confirmedPositions = JSON.parse(localStorage.getItem('confirmed_position_letters') || '{}');
     Object.entries(knownPositions).forEach(([position, letter]) => {
         confirmedPositions[position] = letter.toUpperCase();
@@ -95,6 +103,7 @@ async function Format_Result_and_display() {
     var result_unknown_positions = JSON.parse(localStorage.getItem("result_unknown_positions") || "[]");
     var known_unused_letters = JSON.parse(localStorage.getItem("known_unused_letters") || "[]");
     var guess_statuses = JSON.parse(localStorage.getItem('guess_statuses') || '[]');
+    // Learning reference for console debugging: Codecademy (2020), Learn JavaScript with Codecademy!, 30:38–31:14. https://www.youtube.com/watch?v=O8PlcR-4GRQ&t=1838s (Accessed: 26 October 2026).
     console.log(result_known_positions)
     console.log(result_unknown_positions)
     /* get previous guess row */
@@ -102,14 +111,19 @@ async function Format_Result_and_display() {
     updateGuessFeedback(previous_row, current_guess_number, guess_statuses, result_known_positions, result[0] === "correct");
 
     /* Prioritized style application using an if-else chain to prevent duplicate letters from overwriting each other */
+    // Supporting explanation: JavaScript.info (2022) Loops: while and for. https://javascript.info/while-for (Accessed: 26 October 2026).
     for (let i = 0; i < 5; i++) {
         let character = previous_row.children[i];
         let lowerChar = (character.value || '').toLowerCase();
 
         if (result_known_positions[i]) {
             // 1. Green / Correct Position (Highest Priority)
+            // MDN Web Docs (2026) HTMLElement: style property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style (Accessed: 26 October 2026).
+            // MDN Web Docs (2026) background-image. Available at: https://developer.mozilla.org/en-US/docs/Web/CSS/background-image (Accessed: 26 October 2026).
             character.style.backgroundImage = 'url("Tick Square.png")';
+            // MDN Web Docs (2026) background-size. Available at: https://developer.mozilla.org/en-US/docs/Web/CSS/background-size (Accessed: 26 October 2026).
             character.style.backgroundSize = 'cover';
+            // MDN Web Docs (2026) color. Available at: https://developer.mozilla.org/en-US/docs/Web/CSS/color (Accessed: 26 October 2026).
             character.style.color = 'white';
         } else if (result_unknown_positions.includes(character.value) || result_unknown_positions.includes(lowerChar)) {
             // 2. Yellow / Present in Word but Wrong Position
@@ -124,8 +138,10 @@ async function Format_Result_and_display() {
         }
 
         /* remove the empty class from the character box */
+        // MDN Web Docs (2024) DOMTokenList: remove() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove (Accessed: 14 October 2026).
         character.classList.remove("empty");
         /* disable the character box so that the user cannot type in it */
+        // MDN Web Docs (2025) HTMLInputElement: disabled property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/disabled (Accessed: 14 October 2026).
         character.disabled = true;
     }
 
@@ -164,6 +180,7 @@ async function Format_Result_and_display() {
     
     handleFlashAndInput();
     if (current_row && current_row.children[0]) {
+        // MDN Web Docs (2025) HTMLElement: focus() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus (Accessed: 30 September 2026).
         current_row.children[0].focus();
     }
     attachGuessSubmitHandler();
@@ -183,6 +200,7 @@ async function flashCurrentGuess() {
             if (character) character.value = "_";
         }
         
+        // Supporting explanation: JavaScript.info (2025) Async/await. https://javascript.info/async-await (Accessed: 26 October 2026).
         await new Promise(resolve => setTimeout(resolve, 500));
         if (!isFlashing) break; // Check again after the wait
 
@@ -340,6 +358,9 @@ function attachGuessSubmitHandler() {
         }
     });
     /* if all the words have been filled and the user tabs out of the last box, submit the guess */
+    // MDN Web Docs (2026) Element: blur event. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event (Accessed: 14 October 2026).
+    // MDN Web Docs (2026) EventTarget: addEventListener() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener (Accessed: 30 September 2026).
+    // MDN Web Docs (2026) Array.prototype.every(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every (Accessed: 14 October 2026).
     lastInput.addEventListener('blur', function (e) {
         if (inputs.every(input => input.value !== '')) {
             const guessSubmitted = ConvertRowtoGuess();
@@ -352,11 +373,13 @@ function attachGuessSubmitHandler() {
 }
 
 
+// Supporting explanation: JavaScript.info (2026) Functions. https://javascript.info/function-basics (Accessed: 26 October 2026).
 function display_message(title, content) {
     const messageContainer = document.getElementById('message-container');
     const messageTitle = document.getElementById('message-title');
     const messageContent = document.getElementById('message-content');
 
+    // Video DOM example: Codecademy (2020), 1:10:22–1:14:14. https://www.youtube.com/watch?v=O8PlcR-4GRQ&t=4222s (Accessed: 26 October 2026). Uses the same general DOM-update concept, not identical code.
     messageTitle.textContent = title;
     messageContent.textContent = content;
     messageContainer.classList.remove('message-container-hidden');

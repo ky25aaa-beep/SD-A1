@@ -1,5 +1,6 @@
 //simplify code use plain js functions and remove unnecessary code
 
+// MDN Web Docs (2025) function declaration. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
 function normaliseWordList(rawList) {
     if (Array.isArray(rawList)) {
         return rawList;
@@ -16,9 +17,13 @@ function normaliseWordList(rawList) {
 var wordList = [];
 function load_wordlist(){
     /* Fetch the word list once, then reuse the cached copy on later visits. */
+    // MDN Web Docs (2026) Window: localStorage property. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2024) Storage: getItem() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Storage/getItem (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
     const storedWordList = localStorage.getItem("wordList");
+    // MDN Web Docs (2026) JSON.parse(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
     const parsedStoredWordList = storedWordList ? JSON.parse(storedWordList) : [];
     const normalisedStoredWordList = normaliseWordList(parsedStoredWordList);
+    // MDN Web Docs (2025) Document: getElementById() method. Available at: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
     const statusRegion = document.getElementById("game-status");
 
     if (normalisedStoredWordList.length > 0) {
@@ -31,6 +36,7 @@ function load_wordlist(){
         if (statusRegion) statusRegion.textContent = "Loading the word list.";
         fetch("https://darkermango.github.io/5-Letter-words/words.json")
             .then(response => {
+                // MDN Web Docs (2025) Template literals (Template strings). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals (Accessed: 30 September 2026). First recorded code use: commit ffbc57d.
                 if (!response.ok) throw new Error(`Word list request failed: ${response.status}`);
                 return response.json();
             })
@@ -50,16 +56,20 @@ function load_wordlist(){
     }
 }
 load_wordlist();
+// Learning reference for console debugging: Codecademy (2020), Learn JavaScript with Codecademy!, 30:38–31:14. https://www.youtube.com/watch?v=O8PlcR-4GRQ&t=1838s (Accessed: 26 October 2026).
 console.log("Word list loaded:", wordList);
 
 
 
 function GET_Random_Word() {
     const words = normaliseWordList(wordList);
+    // MDN Web Docs (2025) Falsy. Available at: https://developer.mozilla.org/en-US/docs/Glossary/Falsy (Accessed: 14 October 2026). First recorded code use: commit b040981.
     if (!words.length) {
         return "";
     }
 
+    // MDN Web Docs (2025) Math.random(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
+    // MDN Web Docs (2025) Math.floor(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor (Accessed: 7 October 2026). First recorded code use: commit 7a75d7f.
     var temp_random_number = Math.floor(Math.random() * words.length);
     return words[temp_random_number];
 }
@@ -122,6 +132,7 @@ function GET_guess_result(guess) {
 
     // Count how many times each letter appears in the secret word
     var secret_letter_counts = {};
+    // MDN Web Docs (2026) for statement. Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for (Accessed: 30 September 2026). First recorded code use: commit df1ca22.
     for (let i = 0; i < random_word.length; i++) {
         let char = random_word.charAt(i);
         secret_letter_counts[char] = (secret_letter_counts[char] || 0) + 1;
@@ -152,6 +163,7 @@ function GET_guess_result(guess) {
             guess_statuses[i] = "unknown";
             // Store the letter in our list of misplaced letters if not already present
             if (!result_unknown_positions.includes(letter)) {
+                // MDN Web Docs (2026) Array.prototype.push(). Available at: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push (Accessed: 14 October 2026). First recorded code use: commit b4ff788.
                 result_unknown_positions.push(letter);
             }
             secret_letter_counts[letter]--; // Subtract from pool

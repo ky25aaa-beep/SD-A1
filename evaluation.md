@@ -80,12 +80,16 @@ Pseudocode described the order of validation, letter evaluation and game-state d
 ## 6. JavaScript course reflection and evidence
 
 
-- **Course/platform:** freeCodeCamp Video
-- **Modules completed:** Whole 3 hour video
+- **Course/platform:** Codecademy - Learn JavaScript with Codecademy! and javascript.Info
+- **Modules completed:** 1.5 hour video + javascript.info guides on loops, if statements, functions etc 
 - **Completion date:** 20-10-2026 to 26-10-2026
 - **Evidence :** ![Screenshot of JavaScript course evidence](README_IMG/SCREENSHOT-EVIDENCE-YOUTUBE.png)
 
-Reflect on the course in your own words: **[Which JavaScript ideas from the course did you use in the game? Give one concrete example from the source. What did you still need to learn independently?]**
+[https://www.youtube.com/watch?v=O8PlcR-4GRQ](https://www.youtube.com/watch?v=O8PlcR-4GRQ)
+
+One JavaScript concept I applied was using loops (for mainly) to repeat a task. In Format_Result_and_display(), a for loop works through the five letter boxes, applies the feedback to each one and disables it after submission. This avoids writing the same instructions five times. I still needed to work out how to handle repeated letters correctly, because each occurrence can need different feedback depending on its position and how many times it appears in the answer.
+
+The tutorial explains console logging from 21:13, debugging with console output around 30:38, and basic DOM manipulation around 1:10:22–1:14:14 (Codecademy, 2020). These concepts are relevant to the game’s console diagnostics and updates to on-page messages. The video is credited as a learning resource, rather than as the source of the game algorithm.
 
 ## 7. References and credits
 
@@ -97,4 +101,8 @@ Reflect on the course in your own words: **[Which JavaScript ideas from the cour
 - Smith, H. (2026) ‘Introducing Wend: our eighth LinkedIn game’, *LinkedIn*, 9 June. Available at: https://www.linkedin.com/pulse/introducing-wend-our-eighth-linkedin-game-helen-smith-bpxec (Accessed: 21 October 2026).
 - W3C (2024) *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation, 12 December. Available at: https://www.w3.org/TR/WCAG22/ (Accessed: 21 October 2026).
 
-
+- Codecademy (2020) *Learn JavaScript with Codecademy!* [YouTube video], 13 April. Available at: https://www.youtube.com/watch?v=O8PlcR-4GRQ (Accessed: 26 October 2026).
+- The accessible-mode tick, cross, question-mark and empty-square icons were created by me in Canva using Unicode symbols.
+- JavaScript.info (2022) *Loops: while and for*. Available at: https://javascript.info/while-for (Accessed: 26 October 2026).
+- JavaScript.info (2026) *Functions*. Available at: https://javascript.info/function-basics (Accessed: 26 October 2026).
+- JavaScript.info (2025) *Async/await*. Available at: https://javascript.info/async-await (Accessed: 26 October 2026).

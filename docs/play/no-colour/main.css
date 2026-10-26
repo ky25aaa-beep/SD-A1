@@ -67,6 +67,7 @@ state {
 .message-container-visible {
     display: flex;
     flex-direction: column;
+    /* W3Schools (n.d.) CSS Position. Available at: https://www.w3schools.com/css/css_position.asp (Accessed: 26 October 2026). */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -74,7 +75,9 @@ state {
 
     width: 80vw;
     max-height: 85vh;
+    /* W3Schools (n.d.) CSS Overflow. Available at: https://www.w3schools.com/css/css_overflow.asp (Accessed: 26 October 2026). */
     overflow-y: auto;
+    /* W3Schools (n.d.) CSS Box Sizing. Available at: https://www.w3schools.com/css/css3_box-sizing.asp (Accessed: 26 October 2026). */
     box-sizing: border-box;
 
     background: #22252d;
@@ -95,6 +98,7 @@ state {
 
 /* Popup heading */
 .message-title {
+    /* W3Schools (n.d.) CSS clamp() Function. Available at: https://www.w3schools.com/cssref/func_clamp.php (Accessed: 26 October 2026). */
     font-size: clamp(1.6rem, 4vw, 2rem);
     font-weight: 700;
     line-height: 1.3;
@@ -113,6 +117,7 @@ state {
     color: #c9cbd3;
 
     margin-bottom: 2rem;
+    /* W3Schools (n.d.) CSS overflow-wrap Property. Available at: https://www.w3schools.com/cssref/css3_pr_overflow-wrap.php (Accessed: 26 October 2026). */
     overflow-wrap: anywhere;
 }
 
@@ -143,6 +148,7 @@ state {
     font-weight: bold;
 
     cursor: pointer;
+    /* W3Schools (n.d.) CSS Transitions. Available at: https://www.w3schools.com/css/css3_transitions.asp (Accessed: 26 October 2026). */
     transition:
         background 0.2s ease,
         transform 0.2s ease,
@@ -165,6 +171,7 @@ state {
 }
 
 /* Opening animation */
+/* W3Schools (n.d.) CSS Animations. Available at: https://www.w3schools.com/css/css3_animations.asp (Accessed: 26 October 2026). */
 @keyframes popup-appear {
     from {
         opacity: 0;
@@ -180,6 +187,7 @@ state {
 /* No-colour game layout: key left, board centre, text feedback right */
 .game-layout {
     display: grid;
+    /* W3Schools (n.d.) CSS Grid Layout. Available at: https://www.w3schools.com/css/css_grid.asp (Accessed: 26 October 2026). */
     grid-template-columns: minmax(12rem, 1fr) auto minmax(18rem, 1fr);
     align-items: start;
     gap: 2rem;
@@ -222,7 +230,9 @@ state {
 
 .guess-feedback p {
     line-height: 1.6;
+    /* W3Schools (n.d.) CSS white-space Property. Available at: https://www.w3schools.com/cssref/pr_text_white-space.php (Accessed: 26 October 2026). */
     white-space: pre-line;
+    /* W3Schools (n.d.) CSS overflow-wrap Property. Available at: https://www.w3schools.com/cssref/css3_pr_overflow-wrap.php (Accessed: 26 October 2026). */
     overflow-wrap: anywhere;
 }
 
@@ -232,6 +242,7 @@ state {
 }
 
 .board .row {
+    /* W3Schools (n.d.) CSS white-space Property. Available at: https://www.w3schools.com/cssref/pr_text_white-space.php (Accessed: 26 October 2026). */
     white-space: nowrap;
 }
 

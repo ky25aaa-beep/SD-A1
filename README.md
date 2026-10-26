@@ -362,6 +362,11 @@ The project used prototyping to explore a Flask/API version before moving to cli
 - **Platform and technologies:** the application must be browser-based and use HTML5, CSS, and JavaScript. Other technologies require tutor approval.
 - **Project requirements:** the work must be managed in a Git-based repository, include a deployed application, and implement at least one feature beyond the core game.
 
+
+## Iteration Evidence
+
+Iteration Evidence Can be found in the commit log at: [https://github.com/ky25aaa-beep/SD-A1](https://github.com/ky25aaa-beep/SD-A1)
+
 ## References and Credits
 
 - darkermango (n.d.) *5-Letter-Words*. GitHub. Available at: https://github.com/darkermango/5-Letter-words (Accessed: 26 October 2026).
@@ -369,3 +374,9 @@ The project used prototyping to explore a Flask/API version before moving to cli
 - Ritchey, K., Patterson, S., Patterson, B. and Ritchey, N. (2023) ‘Wordle as a Teaching Tool’, *PRIMUS*, 33(8), pp. 901–915. doi: https://doi.org/10.1080/10511970.2023.2193951.
 - Smith, H. (2026) ‘Introducing Wend: our eighth LinkedIn game’, *LinkedIn*, 9 June. Available at: https://www.linkedin.com/pulse/introducing-wend-our-eighth-linkedin-game-helen-smith-bpxec (Accessed: 26 October 2026).
 - W3C (2024) *Web Content Accessibility Guidelines (WCAG) 2.2*. W3C Recommendation, 12 December. Available at: https://www.w3.org/TR/WCAG22/ (Accessed: 26 October 2026).
+
+- Codecademy (2020) *Learn JavaScript with Codecademy!* [YouTube video], 13 April. Available at: https://www.youtube.com/watch?v=O8PlcR-4GRQ (Accessed: 26 October 2026).
+- The accessible-mode tick, cross, question-mark and empty-square icons were created by me in Canva using Unicode symbols.
+- JavaScript.info (2022) *Loops: while and for*. Available at: https://javascript.info/while-for (Accessed: 26 October 2026).
+- JavaScript.info (2026) *Functions*. Available at: https://javascript.info/function-basics (Accessed: 26 October 2026).
+- JavaScript.info (2025) *Async/await*. Available at: https://javascript.info/async-await (Accessed: 26 October 2026).
